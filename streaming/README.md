@@ -66,7 +66,7 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
 ## Make a Kafka stream producer in Java  
 
 1. Write the code
-   ```
+   ```java
    Properties props = new Properties();
    props.put("bootstrap.servers", "localhost:9092");
    props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
@@ -88,18 +88,22 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
       ```
       gradle wrapper
       ``` 
+
    1. Compile the code with gradle wrapper
       ```
       ./gradlew build
       ```
+
    1. Add the following line to specify which class will be run by gradle 
       ```
       mainClassName = 'streaming.KafkaCustomerProducer'
       ``` 
+
    1. The most straight forward way is to use gradle wrapper
       ```
       ./gradlew run 
       ```
+
    1. To build a fatJar add the following stuffs to `build.gradle`
       ```
       task fatJar(type: Jar){
@@ -118,22 +122,25 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
           with jar 
       }
       ```
+
       With all dependencies compiled to a fatJar, the package can be submited to _Spark_ engine
       ```
       ./gradlew fatJar
       spark-submit --class streaming.KafkaCustomerProducer streaming.jar
       ``` 
+
    1. While the code is running, execute a Kafka CLI consumer.
       ```
       kafka-console-consumer --zookeeper localhost:2181 --topic test
       ```
+
       Records streamed from Kafka Java producer will be received and print out directly to the terminal.
       
    
 ## Make a Kafka stream consumer in Java  
 
 1. Write code 
-   ```
+   ```java
    Properties props = new Properties();
    props.put("bootstrap.servers", "localhost:9092");
    props.put("group.id", "mygroup");
@@ -159,8 +166,23 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
       mainClassName = 'streaming.KafkaCustomerConsumer'
       ``` 
 
+   1. Follow the same principle, the code can be run via _gradle_ wrapper or _spark_.
+   1. While the Java Kafka consumer is running, execute a Kafka CLI producer
+      ```
+      kafka-console-producer --topic test --broker-list localhost:9092
+      ```  
+
+      or 
+      ```
+      kafka-console-producer --topic test --broker-list localhost:9092 < test.csv
+      ```  
+
+      messages populated to Kafka topic _test_ will be consumed and printed out to the terminal.
+
 # Make a Kafka Avro producer in Java  
+
 # Make a Spark Kafka Avro consumer in Java  
+
 # Connect to Schema registry
 
 
