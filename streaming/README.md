@@ -45,6 +45,17 @@
 
 # kafka Java operation
 
+## Dependency
+
+The following _kafka_ and _spark_ versions are compatible and should work together. In short, kafka version 0.10.1.0 should be paied with spark version 1.6.2. In practice, the following _gradle_ dependencies need to be added to build script.
+```
+compile( 'org.apache.kafka:kafka-clients:0.10.1.0' )           
+compile( 'org.apache.kafka:kafka_2.10:0.10.1.0' )              
+compile( 'org.apache.spark:spark-core_2.10:1.6.2')             
+compile( 'org.apache.spark:spark-streaming_2.10:1.6.2')        
+compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' ) 
+```
+
 ## Make a Kafka stream producer in Java  
 
 1. Write the code
@@ -82,7 +93,25 @@
       ```
       ./gradlew run 
       ```
-   1. With all dependencies compiled to a fatJar, the package can be submited to _Spark_ engine
+   1. To build a fatJar add the following stuffs to `build.gradle`
+      ```
+      task fatJar(type: Jar){
+          zip64 true
+          description = "Assembles a Hadoop ready fat jar file" 
+          baseName = project.name + '-all' 
+          doFirst {
+          from {
+                  configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+          }
+          }
+          manifest {
+                  attributes( "Main-Class": "${archivesBaseName}/${mainClassName}")
+          }
+          exclude 'META-INF/*.RSA','META-INF/*.SF','META-INF/*.DSA'
+          with jar 
+      }
+      ```
+      With all dependencies compiled to a fatJar, the package can be submited to _Spark_ engine
       ```
       ./gradlew fatJar
       spark-submit --class streaming.KafkaCustomerProducer streaming.jar
@@ -95,6 +124,33 @@
       
    
 ## Make a Kafka stream consumer in Java  
+
+1. Write code 
+   ```
+   Properties props = new Properties();
+   props.put("bootstrap.servers", "localhost:9092");
+   props.put("group.id", "mygroup");
+   props.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+   props.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
+   
+   KafkaConsumer<String, String> consumer = new KafkaConsumer<>(props);
+   consumer.subscribe(Arrays.asList("test"));
+   
+   boolean running = true;
+   while (running) {
+        ConsumerRecords<String, String> records = consumer.poll(100);
+        for (ConsumerRecord<String, String> record : records) {
+                System.out.println(record.value());
+        }
+   }
+   
+   consumer.close();
+   ```
+1. Compile and run 
+   1. Add the following line to specify which class will be run by gradle 
+      ```
+      mainClassName = 'streaming.KafkaCustomerConsumer'
+      ``` 
 
 # Make a Kafka Avro producer in Java  
 # Make a Spark Kafka Avro consumer in Java  

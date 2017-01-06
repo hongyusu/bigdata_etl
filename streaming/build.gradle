@@ -9,7 +9,8 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.7
 
-mainClassName = 'streaming.KafkaCustomerProducer'
+//mainClassName = 'streaming.KafkaCustomerProducer'
+mainClassName = 'streaming.KafkaCustomerConsumer'
 
 sourceSets {
     main {
