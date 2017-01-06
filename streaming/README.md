@@ -6,10 +6,12 @@
    ```
    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
    ```
+
 1. Install Kafka and Zookeeper
    ```
    brew install kafka
    ```
+
 1. Install gradle
    ```
    brew install gradle
@@ -21,22 +23,27 @@
    ```
    zkserver start
    ```
+
 1. start kafka server
    ```
    kafka-server-start /usr/local/etc/kafka/server.properties
    ```
+
 1. create a topic, _zookeeper URL_, _partition_, and _replication factor_ need to be given as input parameters 
    ```
    kafka-topics --zookeeper localhost:2181 --create --topic test --partition 1 --replication-factor 1
    ```
+
 1. start a kafka producer, _broker server url_ need to be specified
    ```
    kafka-console-producer --topic test --broker-list localhost:9092
    ```
+
    or send to stream content in file
    ```
    kafka-console-producer --topic test --broker-list localhost:9092 < test.csv
    ```
+
 1. start kafka consumer
    ```
    kafka-console-consumer --zookeeper localhost:2181 --topic test
