@@ -85,10 +85,8 @@ public class KafkaAvroProducer {
             schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_test);
             topic  = "test";
         }
-
         Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);
 
-        
         CSVReader reader = null;
         try{
             reader = new CSVReader( new FileReader(inputFilename) );
