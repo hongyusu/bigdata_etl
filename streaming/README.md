@@ -1,18 +1,18 @@
 
 
-# Install Kafka
+# Installations  
 
-1. Install brew
+1. _brew_ should be installed first 
    ```bash
    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
    ```
 
-1. Install Kafka and Zookeeper
+1. Install Zookeeper and Kafka. Zookeeper is part of this Kafka distribution
    ```bash
    brew install kafka
    ```
 
-1. Install gradle
+1. Install gradle to enable building the project coded in Java
    ```bash
    brew install gradle
    ```
@@ -281,7 +281,7 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
    mainClassName = 'streaming.KafkaAvroProducer'
    ```
 
-1. Run the Kafka Avro producer. While running the producer, execute a Kafka CLI consumer to eat message from a Kafka stream _test_
+1. Run the Kafka Avro producer. While running the producer, execute a Kafka CLI consumer to eat messages from a Kafka topic _test_
    ```bash
    kafka-console-consumer --zookeeper localhost:2181 --topic test
    ```
@@ -308,6 +308,99 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
    ```
 
 # Make a Spark Kafka Avro consumer in Java  
+
+The implementation described in the previous section makes sure messages are in Avro format before sending into Kafka topic.
+In this section, we introduce a consumer as implemented in Spark Streaming framework. The consumer will eat Avro message produced by Kafka Avro producer and process the Avro message via Spark Streaming map reduce operations. 
+
+It's good to point out here the difference between Spark streaming processing/transformation and Kafka processing/transformation is Spark engine is essentially working on a stream of RDDs which are created in a certain time window/interval.
+
+1. Initialize Spark streaming context in which time window to generate RDDs is specified in `Duration.seconds()`
+   ```java
+   SparkConf sparkConf = new SparkConf()
+           .setAppName("GFM-Spark-Consumer")
+           .setMaster("local[*]");
+   
+   JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(batchSize));
+   ```
+
+1. Initialize Spark Stream connector to Kafka topic  
+   ```java
+   Map<String, String> kafkaParams = new HashMap<>();
+   kafkaParams.put("zookeeper.connect", zookeeperURL);
+   kafkaParams.put("group.id", groupName);
+   JavaPairReceiverInputDStream<String, byte[]> messages = KafkaUtils.createStream(
+           jssc,
+           String.class, 
+           byte[].class, 
+           StringDecoder.class, 
+           DefaultDecoder.class, 
+           kafkaParams, 
+           topicMap,
+           StorageLevel.MEMORY_AND_DISK_SER());
+   ```
+
+1. Data as in variable _message_ from Spark stream is just a byte array. The decoding and transformation should be implemented on top of this byte array.
+1. Process the Spark Stream via Spark map reduce operations
+   ```java
+   if (operation == CONStest){
+       JavaDStream<String> lines = messages.map( new MapperTestToTestout() );
+       lines.print();
+   }
+   ```
+   Notice that the actual mapper function is implemented via a customerized function.
+
+1. The implemnetaion of the mapper function is as follows
+   ```java
+   public class MapperTestToTestout implements Function<Tuple2<String, byte[]>, String> {
+   
+       private static Injection<GenericRecord, byte[]> testInjection;
+       static{
+           Schema.Parser parserTest = new Schema.Parser();
+           Schema schemaTest = parserTest.parse(SchemaDefinition.AVRO_SCHEMA_test);
+           testInjection = GenericAvroCodecs.toBinary(schemaTest);
+       }
+   
+       private static final long serialVersionUID = 1L;
+   
+       @Override
+       public String call(Tuple2<String, byte[]> tuple2) {
+   
+           // output: definition of Testout in Avro 
+           Injection<GenericRecord, byte[]> testoutInjection;
+           Schema.Parser parserTestout = new Schema.Parser();
+           Schema schemaTestout = parserTestout.parse(SchemaDefinition.AVRO_SCHEMA_testout);
+           testoutInjection     = GenericAvroCodecs.toBinary(schemaTestout);
+           GenericData.Record avroRecordTestout = new GenericData.Record(schemaTestout);
+   
+           // input: Avro message 
+           GenericRecord avroRecordInput = testInjection.invert(tuple2._2()).get();
+   
+           avroRecordTestout.put("date",avroRecordInput.get("out_date"));
+           avroRecordTestout.put("time",avroRecordInput.get("out_time"));
+   
+           return avroRecordTestout.toString();
+       }
+   
+   }
+   ``` 
+   The decoding from byte array to Avro message is through `invert()` from _bijection_ package.
+   As the function call (mapper) will be executed on every worker, variables used in this mapper call need to be defined as static variables and initialized via Java static initialization
+   ```java
+    private static Injection<GenericRecord, byte[]> testInjection;
+    static{
+        Schema.Parser parserTest = new Schema.Parser();
+        Schema schemaTest = parserTest.parse(SchemaDefinition.AVRO_SCHEMA_test);
+        testInjection = GenericAvroCodecs.toBinary(schemaTest);
+    }
+   ``` 
+
+   1. Compile and run the Spark kafka consumer. 
+
+
+
+
+
+ 
 
 # Connect to Schema registry
 

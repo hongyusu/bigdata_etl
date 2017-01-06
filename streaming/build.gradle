@@ -11,7 +11,8 @@ sourceCompatibility = 1.7
 
 //mainClassName = 'streaming.KafkaCustomerProducer'
 //mainClassName = 'streaming.KafkaCustomerConsumer'
-mainClassName = 'streaming.KafkaAvroProducer'
+//mainClassName = 'streaming.KafkaAvroProducer'
+mainClassName = 'streaming.SparkKafkaConsumer'
 
 sourceSets {
     main {
