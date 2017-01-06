@@ -3,49 +3,49 @@
 # Install Kafka
 
 1. Install brew
-   ```
+   ```bash
    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
    ```
 
 1. Install Kafka and Zookeeper
-   ```
+   ```bash
    brew install kafka
    ```
 
 1. Install gradle
-   ```
+   ```bash
    brew install gradle
    ```
 
 # Kafka CLI operations
 
 1. kafka won't work without zookeep, so start zookeeper
-   ```
+   ```bash
    zkserver start
    ```
 
 1. start kafka server
-   ```
+   ```bash
    kafka-server-start /usr/local/etc/kafka/server.properties
    ```
 
 1. create a topic, _zookeeper URL_, _partition_, and _replication factor_ need to be given as input parameters 
-   ```
+   ```bash
    kafka-topics --zookeeper localhost:2181 --create --topic test --partition 1 --replication-factor 1
    ```
 
 1. start a kafka producer, _broker server url_ need to be specified
-   ```
+   ```bash
    kafka-console-producer --topic test --broker-list localhost:9092
    ```
 
    or send to stream content in file
-   ```
+   ```bash
    kafka-console-producer --topic test --broker-list localhost:9092 < test.csv
    ```
 
 1. start kafka consumer
-   ```
+   ```bash
    kafka-console-consumer --zookeeper localhost:2181 --topic test
    ```
 
@@ -85,22 +85,22 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
 
 1. Compile and run
    1. Code should be compiled with _gradle_. First, generate a gradle wrapper
-      ```
+      ```bash
       gradle wrapper
       ``` 
 
    1. Compile the code with gradle wrapper
-      ```
+      ```bash
       ./gradlew build
       ```
 
    1. Add the following line to specify which class will be run by gradle 
-      ```
+      ```bash
       mainClassName = 'streaming.KafkaCustomerProducer'
       ``` 
 
    1. The most straight forward way is to use gradle wrapper
-      ```
+      ```bash
       ./gradlew run 
       ```
 
@@ -124,13 +124,13 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
       ```
 
       With all dependencies compiled to a fatJar, the package can be submited to _Spark_ engine
-      ```
+      ```bash
       ./gradlew fatJar
       spark-submit --class streaming.KafkaCustomerProducer streaming.jar
       ``` 
 
    1. While the code is running, execute a Kafka CLI consumer.
-      ```
+      ```bash
       kafka-console-consumer --zookeeper localhost:2181 --topic test
       ```
 
@@ -168,12 +168,12 @@ compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.2' )
 
    1. Follow the same principle, the code can be run via _gradle_ wrapper or _spark_.
    1. While the Java Kafka consumer is running, execute a Kafka CLI producer
-      ```
+      ```bash
       kafka-console-producer --topic test --broker-list localhost:9092
       ```  
 
       or 
-      ```
+      ```bash
       kafka-console-producer --topic test --broker-list localhost:9092 < test.csv
       ```  
 
