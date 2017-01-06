@@ -394,7 +394,9 @@ It's good to point out here the difference between Spark streaming processing/tr
     }
    ``` 
 
-   1. Compile and run the Spark kafka consumer. 
+1. Compile and run the Spark kafka consumer. 
+
+
 
 
 
