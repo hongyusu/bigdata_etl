@@ -52,6 +52,11 @@ curl -X POST http://localhost:8081/subjects/schemaTest/versions \
     -H "Content-Type: application/vnd.schemaregistry.v1+json" \
     --data "${schemaTest}" 
 
+# retrive schema: schemaTest with the latest version
+curl -X GET -i http://localhost:8081/subjects/schemaTest/versions/latest
+
+# retrive schema: schemaTestout with the latest version
+curl -X GET -i http://localhost:8081/subjects/schemaTestout/versions/latest
 
 exit
 
