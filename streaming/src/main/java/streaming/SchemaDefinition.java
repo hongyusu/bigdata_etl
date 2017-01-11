@@ -11,37 +11,37 @@ package streaming;
 
 public class SchemaDefinition{
 
-    public static final String AVRO_SCHEMA_testout =
+    public static final String AVRO_SCHEMA_out_1 =
             "{"
             + "\"type\":\"record\","
             + "\"name\":\"testout\","
             + "\"fields\":["
-            + "  {\"name\":\"testout_date\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_time\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_name\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_address\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_country\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_info_6\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_info_7\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_info_8\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_info_9\",\"type\":\"string\" },"
-            + "  {\"name\":\"testout_info_0\",\"type\":\"string\" }"
+            + "  {\"name\":\"out_1_field_1\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_2\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_3\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_4\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_5\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_6\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_7\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_8\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_9\",\"type\":\"string\" },"
+            + "  {\"name\":\"out_1_field_0\",\"type\":\"string\" }"
             + "]}";
 
-    public static final String AVRO_SCHEMA_test =
+    public static final String AVRO_SCHEMA_test_1 =
             "{"
             + "\"type\":\"record\","
             + "\"name\":\"test\","
             + "\"fields\":["
-            + "  {\"name\":\"date\",\"type\":\"string\" },"
-            + "  {\"name\":\"time\",\"type\":\"string\" },"
-            + "  {\"name\":\"name\",\"type\":\"string\" },"
-            + "  {\"name\":\"address\",\"type\":\"string\" },"
-            + "  {\"name\":\"country\",\"type\":\"string\" },"
-            + "  {\"name\":\"info_6\",\"type\":\"string\" },"
-            + "  {\"name\":\"info_7\",\"type\":\"string\" },"
-            + "  {\"name\":\"info_8\",\"type\":\"string\" },"
-            + "  {\"name\":\"info_9\",\"type\":\"string\" },"
-            + "  {\"name\":\"info_0\",\"type\":\"string\" }"
+            + "  {\"name\":\"test_1_field_1\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_2\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_3\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_4\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_5\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_6\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_7\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_8\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_9\",\"type\":\"string\" },"
+            + "  {\"name\":\"test_1_field_0\",\"type\":\"string\" }"
             + "]}";
 }

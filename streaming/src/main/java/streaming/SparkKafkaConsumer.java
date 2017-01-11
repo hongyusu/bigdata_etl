@@ -31,10 +31,13 @@ import org.apache.avro.generic.GenericRecord;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
@@ -51,6 +54,14 @@ import kafka.serializer.StringDecoder;
 
 
 public class SparkKafkaConsumer {
+
+    private static Injection<GenericRecord, byte[]> testInjection;
+    static{
+        Schema.Parser parserTest = new Schema.Parser();
+        Schema schemaTest = parserTest.parse(SchemaDefinition.AVRO_SCHEMA_test_1);
+        testInjection = GenericAvroCodecs.toBinary(schemaTest);
+    }
+
 
 	private static final String CONStest = "CONSUME-test";
 
@@ -88,7 +99,10 @@ public class SparkKafkaConsumer {
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName("GFM-Spark-Consumer")
-                .setMaster("local[*]");
+                .setMaster("local[*]")
+                .registerKryoClasses(new Class<?>[]{
+                    Class.forName("org.apache.avro.generic.GenericData"),
+                });
 
         JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(batchSize));
 
@@ -102,9 +116,7 @@ public class SparkKafkaConsumer {
         kafkaParams.put("zookeeper.connect", zookeeperURL);
         kafkaParams.put("group.id", groupName);
 
-        // TODO: switch to direct kafka stream to consume from brokers directly 
-        // input byte stream
-        JavaPairReceiverInputDStream<String, byte[]> messages = KafkaUtils.createStream(
+        JavaPairReceiverInputDStream<String, byte[]> kafkaMSG = KafkaUtils.createStream(
                 jssc,
                 String.class, 
                 byte[].class, 
@@ -117,8 +129,29 @@ public class SparkKafkaConsumer {
 
         // define mapping operations
         if (operation == CONStest){
-            JavaDStream<String> lines = messages.map( new MapperTestToTestout() );
-            lines.print();
+
+            // kafka : byte -> spark : avro
+            JavaDStream<GenericRecord> avroInMSG = kafkaMSG.map(
+                    new Function<Tuple2<String, byte[]>,GenericRecord >(){
+                        @Override public GenericRecord call(Tuple2<String, byte[]> tuple2) throws Exception{
+                            return testInjection.invert(tuple2._2()).get();
+                        }
+                    });
+
+            // spark : avro -> spark : avro
+            JavaDStream<GenericRecord> avroOutMSG = avroInMSG.map( new MapperTestToTestout() );
+
+            // spark : avro -> kafka : byte
+            avroOutMSG.foreachRDD(
+                    new Function2<JavaRDD<GenericRecord>,Time,Void>(){
+                        @Override public Void call(JavaRDD<GenericRecord> rdd, Time time) throws Exception{
+                            rdd.collect();
+                            System.out.println(rdd.count());
+                            return null;
+                        }
+                    });
+
+
         }
 
 

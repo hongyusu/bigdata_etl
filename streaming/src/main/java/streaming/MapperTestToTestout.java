@@ -49,34 +49,34 @@ import kafka.serializer.StringDecoder;
 
 
 
-public class MapperTestToTestout implements Function<Tuple2<String, byte[]>, String> {
-
-    private static Injection<GenericRecord, byte[]> testInjection;
-    static{
-        Schema.Parser parserTest = new Schema.Parser();
-        Schema schemaTest = parserTest.parse(SchemaDefinition.AVRO_SCHEMA_test);
-        testInjection = GenericAvroCodecs.toBinary(schemaTest);
-    }
+public class MapperTestToTestout implements Function<GenericRecord, GenericRecord> {
 
     private static final long serialVersionUID = 1L;
 
     @Override
-    public String call(Tuple2<String, byte[]> tuple2) {
+    public GenericRecord call(GenericRecord avroInMSG) {
 
-        // output: definition of Testout in Avro 
+        // output: definition of Testout in avro 
         Injection<GenericRecord, byte[]> testoutInjection;
         Schema.Parser parserTestout = new Schema.Parser();
-        Schema schemaTestout = parserTestout.parse(SchemaDefinition.AVRO_SCHEMA_testout);
+        Schema schemaTestout = parserTestout.parse(SchemaDefinition.AVRO_SCHEMA_out_1);
         testoutInjection     = GenericAvroCodecs.toBinary(schemaTestout);
-        GenericData.Record avroRecordTestout = new GenericData.Record(schemaTestout);
+        GenericData.Record avroOutMSG = new GenericData.Record(schemaTestout);
 
-        // input: Avro message 
-        GenericRecord avroRecordInput = testInjection.invert(tuple2._2()).get();
+        // input: avro message 
 
-        avroRecordTestout.put("testout_date",avroRecordInput.get("date"));
-        avroRecordTestout.put("testout_time",avroRecordInput.get("time"));
+        avroOutMSG.put("out_1_field_1",avroInMSG.get("test_1_field_1"));
+        avroOutMSG.put("out_1_field_2",avroInMSG.get("test_1_field_2"));
+        avroOutMSG.put("out_1_field_3",avroInMSG.get("test_1_field_3"));
+        avroOutMSG.put("out_1_field_4",avroInMSG.get("test_1_field_4"));
+        avroOutMSG.put("out_1_field_5",avroInMSG.get("test_1_field_5"));
+        avroOutMSG.put("out_1_field_6",avroInMSG.get("test_1_field_6"));
+        avroOutMSG.put("out_1_field_7",avroInMSG.get("test_1_field_7"));
+        avroOutMSG.put("out_1_field_8",avroInMSG.get("test_1_field_8"));
+        avroOutMSG.put("out_1_field_9",avroInMSG.get("test_1_field_9"));
+        avroOutMSG.put("out_1_field_0",avroInMSG.get("test_1_field_0"));
 
-        return avroRecordTestout.toString();
+        return avroOutMSG;
     }
 
 }
