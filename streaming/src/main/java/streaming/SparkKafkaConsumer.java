@@ -36,9 +36,11 @@ import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
+import org.apache.spark.api.java.function.VoidFunction2;
 import org.apache.spark.api.java.function.PairFunction;
-import org.apache.spark.streaming.Time;
+import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Duration;
+import org.apache.spark.streaming.Time;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
@@ -48,10 +50,19 @@ import org.apache.spark.streaming.kafka.KafkaUtils;
 import org.apache.spark.streaming.Durations;
 import org.apache.spark.storage.StorageLevel;
 
+import org.apache.kafka.clients.producer.Callback;
+import org.apache.kafka.clients.producer.KafkaProducer;
+import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.clients.producer.RecordMetadata;
+
 import kafka.serializer.DefaultDecoder;
 import kafka.serializer.StringDecoder;
 
+import java.io.*;
+import java.lang.Process;
+import java.util.Properties;
 
+import io.confluent.kafka.serializers.KafkaAvroDecoder;
 
 public class SparkKafkaConsumer {
 
