@@ -82,7 +82,7 @@ public class KafkaAvroProducer {
         Schema.Parser parser = new Schema.Parser();
         Schema schema = null;
         if (operation == PRODtest){
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_test_1);
+            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_TEST);
             topic  = "test";
         }
         Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);

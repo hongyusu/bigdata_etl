@@ -31,17 +31,17 @@ import java.io.IOException;
 
 import com.opencsv.CSVReader;
 
-public class KafkaAvroSerializerProducer {
+public class KafkaRegistrySerializer {
 
 	private static final String PRODtest = "PRODUCE-TEST";
 
     private static String[] args;
 
     public static void main(String[] args) throws Exception {
-        new KafkaAvroSerializerProducer(args).run();
+        new KafkaRegistrySerializer(args).run();
     }
 
-    public KafkaAvroSerializerProducer(String[] args){
+    public KafkaRegistrySerializer(String[] args){
         this.args = args;
     }
 
@@ -89,7 +89,7 @@ public class KafkaAvroSerializerProducer {
         Schema.Parser parser = new Schema.Parser();
         Schema schema = null;
         if (operation == PRODtest){
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_test_1);
+            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_TEST);
             topic  = "test";
         }
         Injection<GenericRecord, byte[]> recordInjection = GenericAvroCodecs.toBinary(schema);
@@ -111,7 +111,7 @@ public class KafkaAvroSerializerProducer {
                 }
                 ProducerRecord record = new ProducerRecord<Object, Object>(topic, "key", avroRecord);
                 try{
-                    producer.send(record, new KafkaAvroSerializerProducerCallback("", messageCount, startTime));
+                    producer.send(record, new KafkaRegistrySerializerCallback("", messageCount, startTime));
                 }catch(SerializationException ex){
                 }
 
@@ -133,7 +133,7 @@ public class KafkaAvroSerializerProducer {
                         ex.printStackTrace();
                     }
                 } else {
-                    producer.send(record, new KafkaAvroSerializerProducerCallback(Arrays.toString(line), messageCount, startTime));
+                    producer.send(record, new KafkaRegistrySerializerCallback(Arrays.toString(line), messageCount, startTime));
                 }
                 */
 
@@ -151,13 +151,13 @@ public class KafkaAvroSerializerProducer {
 
 
 
-class KafkaAvroSerializerProducerCallback implements Callback {
+class KafkaRegistrySerializerCallback implements Callback {
 
     private final String message;
     private final int messageCount;
     private final long startTime;
 
-    public KafkaAvroSerializerProducerCallback( String message, int messageCount, long startTime ) {
+    public KafkaRegistrySerializerCallback( String message, int messageCount, long startTime ) {
         this.message      = message;
         this.messageCount = messageCount;
         this.startTime    = startTime;

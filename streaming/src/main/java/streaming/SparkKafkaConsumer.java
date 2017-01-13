@@ -69,7 +69,7 @@ public class SparkKafkaConsumer {
     private static Injection<GenericRecord, byte[]> testInjection;
     static{
         Schema.Parser parserTest = new Schema.Parser();
-        Schema schemaTest = parserTest.parse(SchemaDefinition.AVRO_SCHEMA_test_1);
+        Schema schemaTest = parserTest.parse(SchemaDefinition.AVRO_SCHEMA_TEST);
         testInjection = GenericAvroCodecs.toBinary(schemaTest);
     }
 

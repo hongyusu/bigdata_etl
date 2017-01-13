@@ -11,7 +11,7 @@ package streaming;
 
 public class SchemaDefinition{
 
-    public static final String AVRO_SCHEMA_out_1 =
+    public static final String AVRO_SCHEMA_OUT =
             "{"
             + "\"type\":\"record\","
             + "\"name\":\"testout\","
@@ -28,7 +28,7 @@ public class SchemaDefinition{
             + "  {\"name\":\"out_1_field_0\",\"type\":\"string\" }"
             + "]}";
 
-    public static final String AVRO_SCHEMA_test_1 =
+    public static final String AVRO_SCHEMA_TEST =
             "{"
             + "\"type\":\"record\","
             + "\"name\":\"test\","
@@ -45,7 +45,7 @@ public class SchemaDefinition{
             + "  {\"name\":\"test_1_field_0\",\"type\":\"string\" }"
             + "]}";
 
-    public static final String AVRO_SCHEMA_rbtran =
+    public static final String AVRO_SCHEMA_RBTRAN =
         "{"
         + "\"type\":\"record\","
         + "\"name\":\"rbtran\","
@@ -167,6 +167,39 @@ public class SchemaDefinition{
 		+ "  { \"name\":\"USER_DATA_28_STRG\",\"type\":\"string\" },"
 		+ "  { \"name\":\"SESSION_XID\",\"type\":\"string\" }"
         + "]}";
+
+    public static final String AVRO_SCHEMA_AIS =
+        "{"
+        + "\"type\":\"record\","
+        + "\"name\":\"AIS\","
+        + "\"fields\":["
+        + "  { \"name\":\"fico_field_1\", \"type\":\"string\" }"
+        + "]}";
+
+    public static final String AVRO_SCHEMA_BIS =
+        "{"
+        + "\"type\":\"record\","
+        + "\"name\":\"BIS\","
+        + "\"fields\":["
+        + "  { \"name\":\"fico_field_1\", \"type\":\"string\" }"
+        + "]}";
+
+    public static final String AVRO_SCHEMA_CIS =
+        "{"
+        + "\"type\":\"record\","
+        + "\"name\":\"CIS\","
+        + "\"fields\":["
+        + "  { \"name\":\"fico_field_1\", \"type\":\"string\" }"
+        + "]}";
+
+    public static final String AVRO_SCHEMA_NMON =
+        "{"
+        + "\"type\":\"record\","
+        + "\"name\":\"NMON\","
+        + "\"fields\":["
+        + "  { \"name\":\"fico_field_1\", \"type\":\"string\" }"
+        + "]}";
+
 
 
     public static final String AVRO_SCHEMA_f2441em =

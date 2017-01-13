@@ -30,10 +30,13 @@ import org.apache.avro.generic.GenericRecord;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaSparkContext;
+import org.apache.spark.api.java.JavaPairRDD;
+import org.apache.spark.api.java.JavaRDD;
 import org.apache.spark.api.java.function.FlatMapFunction;
 import org.apache.spark.api.java.function.Function;
 import org.apache.spark.api.java.function.Function2;
 import org.apache.spark.api.java.function.PairFunction;
+import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.streaming.Duration;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaPairDStream;
@@ -48,7 +51,6 @@ import kafka.serializer.DefaultDecoder;
 import kafka.serializer.StringDecoder;
 
 
-
 public class MapperTestToTestout implements Function<GenericRecord, GenericRecord> {
 
     private static final long serialVersionUID = 1L;
@@ -59,9 +61,9 @@ public class MapperTestToTestout implements Function<GenericRecord, GenericRecor
         // output: definition of Testout in avro 
         Injection<GenericRecord, byte[]> testoutInjection;
         Schema.Parser parserTestout = new Schema.Parser();
-        Schema schemaTestout = parserTestout.parse(SchemaDefinition.AVRO_SCHEMA_out_1);
-        testoutInjection     = GenericAvroCodecs.toBinary(schemaTestout);
-        GenericData.Record avroOutMSG = new GenericData.Record(schemaTestout);
+        Schema schemaOUT = parserTestout.parse(SchemaDefinition.AVRO_SCHEMA_OUT);
+        testoutInjection     = GenericAvroCodecs.toBinary(schemaOUT);
+        GenericData.Record avroOutMSG = new GenericData.Record(schemaOUT);
 
         // input: avro message 
 
@@ -76,10 +78,11 @@ public class MapperTestToTestout implements Function<GenericRecord, GenericRecor
         avroOutMSG.put("out_1_field_9",avroInMSG.get("test_1_field_9"));
         avroOutMSG.put("out_1_field_0",avroInMSG.get("test_1_field_0"));
 
+        //final Broadcast<String> testStr = VariableDefinition.getInstance(avroInMSG.context());
+        //System.out.println("-----" + testStr.value());
         return avroOutMSG;
     }
 
 }
-
 
 

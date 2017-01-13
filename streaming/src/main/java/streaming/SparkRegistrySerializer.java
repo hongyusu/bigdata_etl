@@ -68,33 +68,26 @@ import io.confluent.kafka.serializers.KafkaAvroDecoder;
 
 public class SparkRegistrySerializer {
 
-    private static Injection<GenericRecord, byte[]> outInjection;
-    static{
-        Schema.Parser parserOUT = new Schema.Parser();
-        Schema schemaOUT = parserOUT.parse(SchemaDefinition.AVRO_SCHEMA_out_1);
-        outInjection     = GenericAvroCodecs.toBinary(schemaOUT);
-    }
+	private static final String CONSUMEtest     = "CONSUME-test";
+	private static final String CONSUMEf2441em  = "CONSUME-f2441em";
+	private static final String CONSUMEf2441hm  = "CONSUME-f2441hm";
+	private static final String CONSUMEf2441su  = "CONSUME-f2441su";
+	private static final String CONSUMEf2441ve  = "CONSUME-f2441ve";
+	private static final String CONSUMEf2441vh  = "CONSUME-f2441vh";
+	private static final String CONSUMEf2441ya  = "CONSUME-f2441ya";
+	private static final String CONSUMEf2441yp  = "CONSUME-f2441yp";
+	private static final String CONSUMEt3330bb  = "CONSUME-t3330bb";
+	private static final String CONSUMEt3330tr  = "CONSUME-t3330tr";
+	private static final String CONSUMEfacpcus  = "CONSUME-facpcus";
+	private static final String CONSUMEmulelist = "CONSUME-mulelist";
+	private static final String CONSUMEhotlist  = "CONSUME-hotlist";
 
-    private static Injection<GenericRecord, byte[]> rbtranInjection;
-    static{
-        Schema.Parser parserRBTRAN = new Schema.Parser();
-        Schema schemaRBTRAN = parserRBTRAN.parse(SchemaDefinition.AVRO_SCHEMA_rbtran);
-        rbtranInjection     = GenericAvroCodecs.toBinary(schemaRBTRAN);
-    }
-
-	private static final String CONStest     = "CONSUME-test";
-	private static final String CONSf2441em  = "CONSUME-f2441em";
-	private static final String CONSf2441hm  = "CONSUME-f2441hm";
-	private static final String CONSf2441su  = "CONSUME-f2441su";
-	private static final String CONSf2441ve  = "CONSUME-f2441ve";
-	private static final String CONSf2441vh  = "CONSUME-f2441vh";
-	private static final String CONSf2441ya  = "CONSUME-f2441ya";
-	private static final String CONSf2441yp  = "CONSUME-f2441yp";
-	private static final String CONSt3330bb  = "CONSUME-t3330bb";
-	private static final String CONSt3330tr  = "CONSUME-t3330tr";
-	private static final String CONSfacpcus  = "CONSUME-facpcus";
-	private static final String CONSmulelist = "CONSUME-mulelist";
-	private static final String CONShotlist  = "CONSUME-hotlist";
+    private static KafkaProducer<String, byte[]> producerOUT;
+    private static KafkaProducer<String, byte[]> producerRBTRAN;
+    private static KafkaProducer<String, byte[]> producerAIS;
+    private static KafkaProducer<String, byte[]> producerBIS;
+    private static KafkaProducer<String, byte[]> producerCIS;
+    private static KafkaProducer<String, byte[]> producerNMON;
 
     private static void setLogLevels() {
         boolean log4jInitialized = Logger.getRootLogger().getAllAppenders().hasMoreElements();
@@ -106,33 +99,29 @@ public class SparkRegistrySerializer {
         Logger.getLogger("akka").setLevel(Level.OFF);
     }
     
-    private static KafkaProducer<String, byte[]> producerOUT;
-    private static KafkaProducer<String, byte[]> producerRBTRAN;
-    private static KafkaProducer<String, byte[]> producerAIS;
-    private static KafkaProducer<String, byte[]> producerBIS;
-    private static KafkaProducer<String, byte[]> producerCIS;
-    private static KafkaProducer<String, byte[]> producerNMON;
-
     public static void main(String[] args) throws Exception {
 
         int batchSize       = 3;
         int numThreads      = 1;
         String topics       = "test";
         String zookeeperURL = "localhost:2181";
+        String registryURL  = "http://localhost:8081";
+        String bootstrapURL = "localhost:9092";
         String groupName    = "mygroup";
-        String operation    = CONStest;
+        String operation    = CONSUMEtest;
 
         // parse input arguments
 		for (int i = 0; i < args.length; i++) {
-			if (args[i].equals("--batch-size"))               { batchSize    = Integer.parseInt(args[++i]);
+			if        (args[i].equals("--batch-size"))        { batchSize    = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--number-threads") )   { numThreads   = Integer.parseInt(args[++i]);
             } else if (args[i].equals("--topics") )           { topics       = args[++i];
             } else if (args[i].equals("--zookeeper-url") )    { zookeeperURL = args[++i];
+            } else if (args[i].equals("--registry-url") )     { registryURL  = args[++i];
+            } else if (args[i].equals("--bootstrap-url") )    { bootstrapURL = args[++i];
             } else if (args[i].equals("--group") )            { groupName    = args[++i];
-			} else if (args[i].equals("--consume-test"))      { operation    = CONStest;
+			} else if (args[i].equals("--consume-test"))      { operation    = CONSUMEtest;
 			}
 		}
-
 
         SparkConf sparkConf = new SparkConf()
                 .setAppName("Spark-Registry-Serializer-Consumer")
@@ -153,50 +142,61 @@ public class SparkRegistrySerializer {
         }
 
         Map<String, String> kafkaParams = new HashMap<>();
-        kafkaParams.put("zookeeper.connect", "localhost:2181");
-        kafkaParams.put("schema.registry.url", "http://localhost:8081");
+        kafkaParams.put("zookeeper.connect", zookeeperURL);
+        kafkaParams.put("schema.registry.url", registryURL);
         kafkaParams.put("group.id", groupName);
 
         Properties props = new Properties();
-        props.put("bootstrap.servers", "localhost:9092");
+        props.put("bootstrap.servers", bootstrapURL);
         props.put("key.serializer", "org.apache.kafka.common.serialization.StringSerializer");
         props.put("value.serializer", "org.apache.kafka.common.serialization.ByteArraySerializer");
 
-        // TODO: switch to direct kafka stream to consume from brokers directly 
-        // KafkaUtils.createDirectStream();
-        
-        JavaPairReceiverInputDStream<String, GenericRecord> kafkaMSG = KafkaUtils.createStream(
-                jssc,
-                String.class, 
-                GenericRecord.class, 
-                StringDecoder.class, 
-                KafkaAvroDecoder.class, 
-                kafkaParams, 
-                topicMap,
-                StorageLevel.MEMORY_AND_DISK_SER());
-
-        producerRBTRAN = new KafkaProducer<>(props);
         producerOUT    = new KafkaProducer<>(props);
+        producerRBTRAN = new KafkaProducer<>(props);
+        producerAIS    = new KafkaProducer<>(props);
+        producerBIS    = new KafkaProducer<>(props);
+        producerCIS    = new KafkaProducer<>(props);
+        producerNMON   = new KafkaProducer<>(props);
 
-        // define mapping operations
-        if (operation == CONStest){
+        // TODO: switch to direct kafka stream to consume from brokers directly (KafkaUtils.createDirectStream())
+        JavaPairReceiverInputDStream<String, GenericRecord> kafkaMSG = null;
+
+        // define operations
+        if (operation == CONSUMEtest){
+            // test
+
+            kafkaMSG = KafkaUtils.createStream(
+                    jssc,
+                    String.class, 
+                    GenericRecord.class, 
+                    StringDecoder.class, 
+                    KafkaAvroDecoder.class, 
+                    kafkaParams, 
+                    topicMap,
+                    StorageLevel.MEMORY_AND_DISK_SER());
 
             JavaDStream<GenericRecord> avroInMSG = kafkaMSG.map(
                     new Function<Tuple2<String, GenericRecord>,GenericRecord >(){
-                        @Override public GenericRecord call(Tuple2<String, GenericRecord> tuple2) throws Exception{
+                        @Override
+                        public GenericRecord call(Tuple2<String, GenericRecord> tuple2) throws Exception{
                             return tuple2._2();
                         }
                     });
 
-            JavaDStream<GenericRecord> avroOutMSG = avroInMSG.map( new MapperTestToTestout() );
+            JavaDStream<GenericRecord> avroOutMSG = avroInMSG.transform( new TransformTestToTestout() );
 
             avroOutMSG.foreachRDD(
                     new Function2<JavaRDD<GenericRecord>, Time, Void>(){
+
                         public Void call(JavaRDD<GenericRecord> rdd, Time time) throws Exception{
+
                             byte[] bytes   = null;
                             long startTime = 0;
                             ProducerRecord<String, byte[]> data = null;
                             List<GenericRecord> records = null;
+                            final Broadcast<Map<String,Schema>> schemaList = VariableDefinition.getInstance(new JavaSparkContext(rdd.context()));
+                            Injection<GenericRecord, byte[]> outInjection = GenericAvroCodecs.toBinary(schemaList.value().get("OUT"));
+
                             if (rdd != null){
                                 records = rdd.collect();
                                 for (GenericRecord record : records){
@@ -206,28 +206,31 @@ public class SparkRegistrySerializer {
                                     producerOUT.send(data, new KafkaProducerCallback(startTime));
                                 }
                                 System.out.println("----- Message processed: " + rdd.count());
-                                //final Broadcast<String> testStr = BC.getInstance(new JavaSparkContext(rdd.context()));
-                                //System.out.println("-----" + testStr.value());
                             }
+
                             return null;
+
                         }
                     });
 
-        } else if (operation == CONSf2441em)  {
-        } else if (operation == CONSf2441hm)  {
-        } else if (operation == CONSf2441su)  {
-        } else if (operation == CONSf2441ve)  {
-        } else if (operation == CONSf2441vh)  {
-        } else if (operation == CONSf2441ya)  {
-        } else if (operation == CONSf2441yp)  {
-        } else if (operation == CONSt3330bb)  {
-        } else if (operation == CONSt3330tr)  {
-        } else if (operation == CONSfacpcus)  {
-        } else if (operation == CONSmulelist) {
-        } else if (operation == CONShotlist)  {
+        } else if (operation == CONSUMEf2441em)  {
+        } else if (operation == CONSUMEf2441hm)  {
+        } else if (operation == CONSUMEf2441su)  {
+        } else if (operation == CONSUMEf2441ve)  {
+        } else if (operation == CONSUMEf2441vh)  {
+        } else if (operation == CONSUMEf2441ya)  {
+        } else if (operation == CONSUMEf2441yp)  {
+        } else if (operation == CONSUMEt3330bb)  {
+            // to AIS
+        } else if (operation == CONSUMEt3330tr)  {
+            // to RBTRAN
+        } else if (operation == CONSUMEfacpcus)  {
+            // to BIS|CIS
+        } else if (operation == CONSUMEmulelist) {
+            // to mulelist
+        } else if (operation == CONSUMEhotlist)  {
+            // to hotlist
         }
-
-
 
         jssc.start();
         jssc.awaitTermination();
@@ -235,22 +238,6 @@ public class SparkRegistrySerializer {
 }
 
 
-
-
-class BC{
-    private static volatile Broadcast<String> instance = null;
-    public static Broadcast<String> getInstance(JavaSparkContext jsc){
-        if(instance == null){
-            synchronized (BC.class){
-                if (instance == null){
-                    String testStr = "test";
-                    instance = jsc.broadcast(testStr);
-                }
-            }
-        }
-        return instance;
-    }
-}
 
 class KafkaProducerCallback implements Callback {
 
