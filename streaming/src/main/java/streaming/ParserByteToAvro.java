@@ -16,6 +16,7 @@ import org.apache.avro.Schema;
 import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.streams.kstream.ValueMapper;
+import java.nio.charset.StandardCharsets;
 
 public class ParserByteToAvro implements ValueMapper<byte[],GenericRecord>{
 
@@ -30,21 +31,13 @@ public class ParserByteToAvro implements ValueMapper<byte[],GenericRecord>{
 	public GenericRecord apply(byte[] byteMSG){
 
         avroOutMSG = new GenericData.Record(schema);
-
-        avroOutMSG.put("test_1_field_1","processed__");
-        avroOutMSG.put("test_1_field_2","processed__");
-        avroOutMSG.put("test_1_field_3","processed__");
-        avroOutMSG.put("test_1_field_4","processed__");
-        avroOutMSG.put("test_1_field_5","processed__");
-        avroOutMSG.put("test_1_field_6","processed__");
-        avroOutMSG.put("test_1_field_7","processed__");
-        avroOutMSG.put("test_1_field_8","processed__");
-        avroOutMSG.put("test_1_field_9","processed__");
-        avroOutMSG.put("test_1_field_0","processed__");
-
+        String stringMSG = new String(byteMSG, StandardCharsets.UTF_8);
+        String[] fields = stringMSG.split(",");
+        for (int i = 0; i < fields.length; i++){
+            avroOutMSG.put(i,fields[i]);
+        }
         return avroOutMSG;
 	}
-	
 }
 
 

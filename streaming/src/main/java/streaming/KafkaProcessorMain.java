@@ -129,6 +129,7 @@ public class KafkaProcessorMain {
             dataProcessingStream = ProcessTest(props);
 
         } else if (operation == PROCESSmava){
+            dataProcessingStream = ProcessMava(props);
 
         } else if (operation == PROCESSunireal){
             dataProcessingStream = ProcessUnireal(props);
@@ -161,7 +162,10 @@ public class KafkaProcessorMain {
 
         KStreamBuilder builder = new KStreamBuilder();
         KStream<String, byte[]> source = builder.stream(topicIn);
-        KStream<String, GenericRecord> avroInMSG = source.mapValues( new ParserByteToAvro(schema) );
+        KStream<String, GenericRecord> avroInMSG = source
+            //.mapValues( new Preprocessor() )
+            .mapValues( new ParserByteToAvro(schema) )
+            .filter( new FilterTest() );
         avroInMSG.foreach( new SerializerKStreamToRegistry(props,topicOut) );
 
         return new KafkaStreams(builder, props);
@@ -180,13 +184,13 @@ public class KafkaProcessorMain {
         final Schema schemaF2441ya  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441ya);
         final Schema schemaF2441yp  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441yp);
 
-        String topicInF2441em = "GFM.f2441em";
-        String topicInF2441hm = "GFM.f2441hm";
-        String topicInF2441su = "GFM.f2441su";
-        String topicInF2441ve = "GFM.f2441ve";
-        String topicInF2441vh = "GFM.f2441vh";
-        String topicInF2441ya = "GFM.f2441ya";
-        String topicInF2441yp = "GFM.f2441yp";
+        String topicInF2441em = "f2441em";
+        String topicInF2441hm = "f2441hm";
+        String topicInF2441su = "f2441su";
+        String topicInF2441ve = "f2441ve";
+        String topicInF2441vh = "f2441vh";
+        String topicInF2441ya = "f2441ya";
+        String topicInF2441yp = "f2441yp";
         String topicOut       = "GFM.mavaRBTRAN";
 
         KStreamBuilder builder = new KStreamBuilder();
@@ -203,13 +207,14 @@ public class KafkaProcessorMain {
 
         Schema.Parser parser = new Schema.Parser();
         final Schema schema  = parser.parse(SchemaDefinition.AVRO_SCHEMA_t3330bb);
-        String topicIn       = "t3330bb"; 
-        String topicOut      = "GFM.unirealAIS";
+        String topicT3330bb       = "t3330bb"; 
+        String topicUnirealAIS    = "GFM.unirealAIS";
+        String topicUnirealRBTRAN = "GFM.unirealRBTRAN";
 
         KStreamBuilder builder = new KStreamBuilder();
-        KStream<String, byte[]> source = builder.stream(topicIn);
+        KStream<String, byte[]> source = builder.stream(topicT3330bb);
         KStream<String, GenericRecord> avroInMSG = source.mapValues( new ParserByteToAvro(schema) );
-        avroInMSG.foreach( new SerializerKStreamToRegistry(props,topicOut) );
+        avroInMSG.foreach( new SerializerKStreamToRegistry(props,topicUnirealAIS) );
 
         return new KafkaStreams(builder, props);
     }
