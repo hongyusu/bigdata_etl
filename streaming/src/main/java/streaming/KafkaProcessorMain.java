@@ -73,7 +73,8 @@ public class KafkaProcessorMain {
 
         Boolean syncFlag       = false;
         String zookeeperURL    = "localhost:2181";
-        String bootstrapURL    = "localhost:9092";
+        String bootstrapURL    = "http://10.0.1.2:9092";
+        String registryURL     = "http://localhost:8081";
         String keySerializer   = "org.apache.kafka.common.serialization.StringSerializer";
         String valueSerializer = "org.apache.kafka.common.serialization.ByteArraySerializer";
         String operation       = PROCESStest;
@@ -97,16 +98,17 @@ public class KafkaProcessorMain {
 			} else if (args[i].equals("--produce-test   "))   { operation       = PROCESStest;
             } else if (args[i].equals("--zookeeper-url") )    { zookeeperURL    = args[++i];
             } else if (args[i].equals("--bootstrap-url") )    { bootstrapURL    = args[++i];
+            } else if (args[i].equals("--registry-url") )     { registryURL     = args[++i];
             } else if (args[i].equals("--key-serializer") )   { keySerializer   = args[++i];
             } else if (args[i].equals("--value-serializer") ) { valueSerializer = args[++i];
 			}
 		}
 
 		Properties props = new Properties();
-        props.put("key.serializer",    "org.apache.kafka.common.serialization.StringSerializer");
-        props.put("value.serializer",  "org.apache.kafka.common.serialization.ByteArraySerializer");
-        props.put("schema.registry.url", "http://10.0.1.2:8081");
-        props.put("bootstrap.servers", "10.0.1.2:9092");
+        props.put("key.serializer",    keySerializer   );
+        props.put("value.serializer",  valueSerializer );
+        props.put("schema.registry.url", registryURL  );
+        props.put("bootstrap.servers",   bootstrapURL );
         props.put(StreamsConfig.APPLICATION_ID_CONFIG, "kafka-registry-serializer");
         props.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG, Serdes.String().getClass().getName());
         props.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass().getName());
@@ -125,7 +127,7 @@ public class KafkaProcessorMain {
         String topicOut = null;
 
         if (operation == PROCESStest) {
-            topicOut = "GFM.out"; 
+            topicOut = "GFM.test"; 
             dataProcessingStream = ProcessTest(props,topicOut);
 
         } else if (operation == PROCESSmava){
