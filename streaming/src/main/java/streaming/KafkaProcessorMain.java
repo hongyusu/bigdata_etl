@@ -124,30 +124,22 @@ public class KafkaProcessorMain {
          * GenericRecord : link to schema registry server
          */
         KafkaStreams dataProcessingStream = null;
-        String topicOut = null;
 
         if (operation == PROCESStest) {
-            topicOut = "GFM.test"; 
-            dataProcessingStream = ProcessTest(props,topicOut);
+            dataProcessingStream = ProcessTest(props);
 
         } else if (operation == PROCESSmava){
-            topicOut = "GFM.mava"; 
-            //streams = ProcessMava(props);
 
         } else if (operation == PROCESSunireal){
-            topicOut = "GFM.unireal"; 
+            dataProcessingStream = ProcessUnireal(props);
 
         } else if (operation == PROCESScps){
-            topicOut = "GFM.cps"; 
 
         } else if (operation == PROCESSfacpcus){
-            topicOut = "GFM.facpcus"; 
 
         } else if (operation == PROCESShotlist){
-            topicOut = "GFM.hotlist"; 
 
         } else if (operation == PROCESSmulelist){
-            topicOut = "GFM.mulelist"; 
 
         }
 
@@ -160,11 +152,12 @@ public class KafkaProcessorMain {
 
 
     // PROCESS TEST
-    private static KafkaStreams ProcessTest(Properties props, String topicOut) {
+    private static KafkaStreams ProcessTest(Properties props) {
 
         Schema.Parser parser = new Schema.Parser();
         final Schema schema  = parser.parse(SchemaDefinition.AVRO_SCHEMA_TEST);
         String topicIn       = "test"; 
+        String topicOut      = "GFM.test";
 
         KStreamBuilder builder = new KStreamBuilder();
         KStream<String, byte[]> source = builder.stream(topicIn);
@@ -174,27 +167,56 @@ public class KafkaProcessorMain {
         return new KafkaStreams(builder, props);
     }
 
+    // PROCESS Unireal 
+    private static KafkaStreams ProcessMava(Properties props) {
+
+        Schema.Parser parser = new Schema.Parser();
+
+        final Schema schemaF2441em  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441em);
+        final Schema schemaF2441hm  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441hm);
+        final Schema schemaF2441su  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441su);
+        final Schema schemaF2441ve  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441ve);
+        final Schema schemaF2441vh  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441vh);
+        final Schema schemaF2441ya  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441ya);
+        final Schema schemaF2441yp  = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441yp);
+
+        String topicInF2441em = "GFM.f2441em";
+        String topicInF2441hm = "GFM.f2441hm";
+        String topicInF2441su = "GFM.f2441su";
+        String topicInF2441ve = "GFM.f2441ve";
+        String topicInF2441vh = "GFM.f2441vh";
+        String topicInF2441ya = "GFM.f2441ya";
+        String topicInF2441yp = "GFM.f2441yp";
+        String topicOut       = "GFM.mavaRBTRAN";
+
+        KStreamBuilder builder = new KStreamBuilder();
+        //KStream<String, byte[]> source = builder.stream(topicIn);
+        //KStream<String, GenericRecord> avroInMSG = source.mapValues( new ParserByteToAvro(schema) );
+        //avroInMSG.foreach( new SerializerKStreamToRegistry(props,topicOut) );
+
+        return new KafkaStreams(builder, props);
+    }
+
+
+    // PROCESS Unireal 
+    private static KafkaStreams ProcessUnireal(Properties props) {
+
+        Schema.Parser parser = new Schema.Parser();
+        final Schema schema  = parser.parse(SchemaDefinition.AVRO_SCHEMA_t3330bb);
+        String topicIn       = "t3330bb"; 
+        String topicOut      = "GFM.unirealAIS";
+
+        KStreamBuilder builder = new KStreamBuilder();
+        KStream<String, byte[]> source = builder.stream(topicIn);
+        KStream<String, GenericRecord> avroInMSG = source.mapValues( new ParserByteToAvro(schema) );
+        avroInMSG.foreach( new SerializerKStreamToRegistry(props,topicOut) );
+
+        return new KafkaStreams(builder, props);
+    }
+
+
 }
 
 
 
 
-
-/*
-            Schema schema;
-            String topic;
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441em);
-            topic  = "GFM.f2441em";
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441hm);
-            topic  = "GFM.f2441hm";
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441su);
-            topic  = "GFM.f2441su";
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441ve);
-            topic  = "GFM.f2441ve";
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441vh);
-            topic  = "GFM.f2441vh";
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441ya);
-            topic  = "GFM.f2441ya";
-            schema = parser.parse(SchemaDefinition.AVRO_SCHEMA_f2441yp);
-            topic  = "GFM.f2441yp";
-*/

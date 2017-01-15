@@ -372,4 +372,12 @@ public class SchemaDefinition{
             + "  { \"name\":\"fico_field_1\", \"type\":\"string\" }"
             + "]}";
 
+    public static final String AVRO_SCHEMA_t3330bb =
+            "{"
+            + "\"type\":\"record\","
+            + "\"name\":\"t3330bb\","
+            + "\"fields\":["
+            + "  { \"name\":\"fico_field_1\", \"type\":\"string\" }"
+            + "]}";
+
 }
