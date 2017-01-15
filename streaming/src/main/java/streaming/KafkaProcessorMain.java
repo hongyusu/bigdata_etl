@@ -171,7 +171,7 @@ public class KafkaProcessorMain {
         return new KafkaStreams(builder, props);
     }
 
-    // PROCESS Unireal 
+    // PROCESS Mava 
     private static KafkaStreams ProcessMava(Properties props) {
 
         Schema.Parser parser = new Schema.Parser();
