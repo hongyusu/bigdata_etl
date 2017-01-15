@@ -124,18 +124,17 @@ public class SparkRegistrySerializer {
 		}
 
         SparkConf sparkConf = new SparkConf()
-                .setAppName("Spark-Registry-Serializer-Consumer")
-                .setMaster("local[2]")
-                .registerKryoClasses(
-                        new Class<?>[]{
-                            Class.forName("org.apache.avro.generic.GenericData"),
-                        });
+            .setAppName("Spark-Registry-Serializer-Consumer")
+            .setMaster("local[2]")
+            .registerKryoClasses(
+                    new Class<?>[]{
+                        Class.forName("org.apache.avro.generic.GenericData"),
+                    });
 
         JavaStreamingContext jssc = new JavaStreamingContext(sparkConf, Durations.seconds(batchSize));
 
         setLogLevels();
 
-        // topic, thread, zookeeper, group
         Map<String, Integer> topicMap = new HashMap<>();
         for (String topic : topics.split(",")) {
             topicMap.put(topic, numThreads);
@@ -163,7 +162,7 @@ public class SparkRegistrySerializer {
 
         // define operations
         if (operation == CONSUMEtest){
-            // test
+            // to OUT
 
             kafkaMSG = KafkaUtils.createStream(
                     jssc,
@@ -194,7 +193,7 @@ public class SparkRegistrySerializer {
                             long startTime = 0;
                             ProducerRecord<String, byte[]> data = null;
                             List<GenericRecord> records = null;
-                            final Broadcast<Map<String,Schema>> schemaList = VariableDefinition.getInstance(new JavaSparkContext(rdd.context()));
+                            Broadcast<Map<String,Schema>> schemaList = VariableDefinition.getInstance(new JavaSparkContext(rdd.context()));
                             Injection<GenericRecord, byte[]> outInjection = GenericAvroCodecs.toBinary(schemaList.value().get("OUT"));
 
                             if (rdd != null){
@@ -214,12 +213,19 @@ public class SparkRegistrySerializer {
                     });
 
         } else if (operation == CONSUMEf2441em)  {
+            // to RBTRAN
         } else if (operation == CONSUMEf2441hm)  {
+            // to RBTRAN
         } else if (operation == CONSUMEf2441su)  {
+            // to RBTRAN
         } else if (operation == CONSUMEf2441ve)  {
+            // to RBTRAN
         } else if (operation == CONSUMEf2441vh)  {
+            // to RBTRAN
         } else if (operation == CONSUMEf2441ya)  {
+            // to RBTRAN
         } else if (operation == CONSUMEf2441yp)  {
+            // to RBTRAN
         } else if (operation == CONSUMEt3330bb)  {
             // to AIS
         } else if (operation == CONSUMEt3330tr)  {
