@@ -10,9 +10,11 @@ To demo technology for big data ETL operations including
 
 1. Kafka streaming
 1. Spark streaming
-1. Cascading
 1. Schema registry
 1. Avro
 
+`./batch/`
+
+1. Cascading
 
 
