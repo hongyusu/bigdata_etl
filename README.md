@@ -14,9 +14,11 @@ To demo technology for big data ETL operations including
 1. Avro example
 
 `./kafka_processor/`
+
 1. Kafka stream processing example
 
 `./batch/`
+
 1. Cascading processing example
 
 
