@@ -170,7 +170,7 @@ public class KafkaETLMain {
         KTable<String,GenericRecord> KT_logaction_cus = source_logaction
             .mapValues( new ParserByteToAvro(schema_logaction) )
             .mapValues( new Processlogaction() )
-            //.filter( new Filterlogaction() )
+            .filter( new Filterlogaction() )
             .map( new RepartitionByField("logaction_ASIAKASTUNNUS") )
             .through(stringSerde, avroSerde, "logaction-user")
             .groupByKey(stringSerde, avroSerde)
@@ -185,7 +185,7 @@ public class KafkaETLMain {
         KStream<String, GenericRecord> avroIn_loguser = source_loguser
             .mapValues( new ParserByteToAvro(schema_loguser) )
             .mapValues( new Processloguser() )
-            //.filter( new Filterloguser() )
+            .filter( new Filterloguser() )
             .map( new RepartitionByField("loguser_CUSTOMER_ID") )
             .through(stringSerde, avroSerde, "facp-loguser");
 

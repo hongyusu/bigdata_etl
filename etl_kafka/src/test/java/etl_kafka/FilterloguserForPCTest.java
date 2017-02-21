@@ -101,9 +101,6 @@ public class FilterloguserForPCTest {
             driver.process(topicName, "key", msgIn[i]);
         }
 
-        System.out.println("----------------");
-        System.out.println(processors[0].processed.size());
-        System.out.println(processors[1].processed.size());
         assertEquals(23, processors[0].processed.size());
         assertEquals(5, processors[1].processed.size());
 

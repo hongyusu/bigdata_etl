@@ -9,7 +9,7 @@ apply plugin: 'application'
 
 sourceCompatibility = 1.7
 
-mainClassName = 'kafka_etl.SourceConnectorFacp'
+mainClassName = 'etl_kafka.SourceConnectorFacp'
 
 
 sourceSets {
@@ -56,8 +56,8 @@ dependencies {
     compile( 'com.opencsv:opencsv:3.8' )
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile files( '/Users/hongyusu/Codes/kafka/streams/build/libs/kafka-streams-0.10.3.0-SNAPSHOT-test.jar')
-    testCompile files( '/Users/hongyusu/Codes/kafka/streams/build/libs/kafka-streams-0.10.3.0-SNAPSHOT-sources.jar')
+    testCompile files( '/Users/hongyusu/Codes/kafka/streams/build/libs/kafka-streams-0.10.1.0-test.jar')
+    testCompile files( '/Users/hongyusu/Codes/kafka/streams/build/libs/kafka-streams-0.10.1.0-sources.jar')
 }
 
 jar {
