@@ -1,0 +1,104 @@
+
+
+import java.text.SimpleDateFormat
+
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'eclipse'
+apply plugin: 'application'
+
+sourceCompatibility = 1.7
+
+mainClassName = 'etl_spark.SparkETLMain'
+
+sourceSets {
+    main {
+        java.srcDir 'src/main/java/'
+    }
+}
+
+configurations {
+    libraries
+}
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+    maven { url 'http://packages.confluent.io/maven/' }
+	maven { url 'http://conjars.org/repo/' }
+	maven { url 'https://repository.cloudera.com/artifactory/cloudera-repos/'}
+}
+
+dependencies {
+    compile files( '/data/code/stash/gfm/schema-registry-3.1.2/client/target/kafka-schema-registry-client-3.1.2.jar')
+    compile( 'io.confluent:kafka-avro-serializer:2.0.1' )
+    compile( 'org.easymock:easymock:3.1' )
+	compile( 'org.slf4j:slf4j-api:1.7.2')                          
+    compile( 'org.apache.logging.log4j:log4j-api:2.6.2' ) 
+    compile( 'org.apache.logging.log4j:log4j-core:2.6.2' )
+    compile( 'com.msiops.footing:footing-tuple:0.2')             
+	compile( 'org.apache.kafka:kafka-clients:0.10.1.0' )           
+	compile( 'org.apache.kafka:kafka_2.10:0.10.1.0' )              
+    compile( 'org.apache.spark:spark-core_2.10:1.6.2') {exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'}            
+    compile( 'org.apache.spark:spark-streaming_2.10:1.6.2') {exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'}       
+	compile( 'org.apache.spark:spark-streaming-kafka_2.10:1.6.3' ) {exclude group: 'com.fasterxml.jackson.core', module: 'jackson-databind'} 
+    compile( 'org.apache.avro:avro:1.8.0' )
+    compile( 'com.twitter:bijection-avro_2.10:0.9.2' )
+    compile( 'com.opencsv:opencsv:3.8' )
+    compile( 'com.fasterxml.jackson.core:jackson-databind:2.6.5' )
+    compile( 'com.fasterxml.jackson.module:jackson-module-scala_2.10:2.6.5' )
+
+    testCompile 'junit:junit:4.12'
+}
+
+test {
+    testLogging {
+        showStandardStreams = true
+    }
+}
+
+jar {
+	description = "Assembles a Hadoop ready jar file" 
+	doFirst {
+        into( 'lib' ) {
+			from configurations.libraries
+	    }   
+	}
+	manifest {
+	    attributes( "Main-Class": "${archivesBaseName}/Main")
+	}
+}
+
+task fatJar(type: Jar){
+    zip64 true
+	description = "Assembles a Hadoop ready fat jar file" 
+    baseName = project.name + '-all' 
+	doFirst {
+        from {
+            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+        }
+	}
+	manifest {
+	    attributes( "Main-Class": "${archivesBaseName}/${mainClassName}")
+	}
+    exclude 'META-INF/*.RSA','META-INF/*.SF','META-INF/*.DSA'
+    with jar 
+}
+
+task distCopy( type: Copy, dependsOn: jar ) {
+	into "${buildDir}/dist/${archivesBaseName}"
+	from 'README.TXT'
+	from 'build.gradle'
+	from ( 'src' )  {into 'src'}
+	from ( 'data' ) {into 'data'}
+	from "$buildDir/libs"
+}
+
+task dist( type: Tar, dependsOn: distCopy ) {
+	compression = "GZIP"
+	classifier  = new SimpleDateFormat( "yyyyMMdd" ).format( new Date() )
+	from "${buildDir}/dist/"
+}
+
+
+
