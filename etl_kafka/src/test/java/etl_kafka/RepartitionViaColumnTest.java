@@ -1,6 +1,6 @@
 /**
  *
- * Test class for RepartitionByField
+ * Test class for RepartitionViaColumn
  *
  */
 
@@ -32,7 +32,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
-public class RepartitionByFieldTest {
+public class RepartitionViaColumnTest {
 
     private String topicName = "topic";
     private KStreamTestDriver driver = null;
@@ -51,13 +51,13 @@ public class RepartitionByFieldTest {
     }
 
     @Test
-    public void testRepartitionByFieldOnLoguser() {
+    public void testRepartitionViaColumnOnLoguser() {
 
         KStreamBuilder builder = new KStreamBuilder();
 
         // SCHEMA
     	Schema.Parser parser  = new Schema.Parser();
-        Schema schema_loguser = parser.parse(SchemaDefinition.AVRO_SCHEMA_loguser);
+        Schema schema_loguser = parser.parse(SchemaDef.AVRO_SCHEMA_loguser);
 
         // MSG
         GenericRecord [] msgOut = new GenericRecord[TestDataLoguser.size];
@@ -87,7 +87,7 @@ public class RepartitionByFieldTest {
         MockProcessorSupplier<String, GenericRecord> processor = new MockProcessorSupplier<>();
         stream = builder.stream(stringSerde, avroSerde, topicName);
         try{
-            stream.map( new RepartitionByField("loguser_CUSTOMER_ID") ).process(processor);
+            stream.map( new RepartitionViaColumn("loguser_CUSTOMER_ID") ).process(processor);
         }catch(Exception ex){
         }
 

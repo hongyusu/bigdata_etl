@@ -31,7 +31,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.charset.StandardCharsets;
 
-public class ParserByteToAvroTest {
+public class GenerateAvroFromByteTest {
 
     private String topicName = "topic";
     private KStreamTestDriver driver = null;
@@ -50,13 +50,13 @@ public class ParserByteToAvroTest {
     }
 
     @Test
-    public void testParserByteToAvroOnLoguser() throws Exception {
+    public void testGenerateAvroFromByteOnLoguser() throws Exception {
 
         KStreamBuilder builder = new KStreamBuilder();
 
         // SCHEMA
     	Schema.Parser parser  = new Schema.Parser();
-        Schema schema_loguser = parser.parse(SchemaDefinition.AVRO_SCHEMA_loguser);
+        Schema schema_loguser = parser.parse(SchemaDef.AVRO_SCHEMA_loguser);
 
         // MSG
         GenericRecord [] msgOut = new GenericRecord[TestDataLoguser.size];
@@ -81,7 +81,7 @@ public class ParserByteToAvroTest {
         KStream<String, byte[]> stream;
         MockProcessorSupplier<String, GenericRecord> processor = new MockProcessorSupplier<>();
         stream = builder.stream(stringSerde, byteArraySerde, topicName);
-        stream.mapValues( new ParserByteToAvro(schema_loguser) ).process(processor);
+        stream.mapValues( new GenerateAvroFromByte(schema_loguser) ).process(processor);
 
         // DRIVER 
         driver = new KStreamTestDriver(builder);

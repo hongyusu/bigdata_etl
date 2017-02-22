@@ -56,7 +56,7 @@ public class ProcessloguserTest {
 
         // SCHEMA
     	Schema.Parser parser  = new Schema.Parser();
-        Schema schema_loguser = parser.parse(SchemaDefinition.AVRO_SCHEMA_loguser);
+        Schema schema_loguser = parser.parse(SchemaDef.AVRO_SCHEMA_loguser);
 
         // MSG
         GenericRecord [] msgIn  = new GenericRecord[TestDataLoguser.size];
