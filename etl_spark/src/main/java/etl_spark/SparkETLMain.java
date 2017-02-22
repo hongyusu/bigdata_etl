@@ -104,8 +104,8 @@ public class SparkETLMain {
             } else if (args[i].equals("--bootstrap-url"))               { bootstrapURL  = args[++i];
             } else if (args[i].equals("--group"))                       { groupName     = args[++i];
             } else if (args[i].equals("--schema-name-out"))             { schemaNameOut = args[++i];
-			} else if (args[i].equals("--process-loguser-p"))            { operation     = ProcessloguserP;
-			} else if (args[i].equals("--process-loguser-c"))            { operation     = ProcessloguserC;
+			} else if (args[i].equals("--process-log-p"))            { operation     = ProcessloguserP;
+			} else if (args[i].equals("--process-log-c"))            { operation     = ProcessloguserC;
 			}
 		}
 
@@ -134,13 +134,13 @@ public class SparkETLMain {
 
         // Prepare in/out topics
         if (operation == ProcessloguserP)       {
-            topicIn       = "OUT.loguserP";
-            topicOut      = "OUT.P";
+            topicIn       = "OUTLogP";
+            topicOut      = "OUTP";
             schemaNameOut = "P";
 
         } else if (operation == ProcessloguserC)       {
-            topicIn       = "OUT.loguserC";
-            topicOut      = "OUT.C";
+            topicIn       = "OUTLogC";
+            topicOut      = "OUTC";
             schemaNameOut = "C";
 
         }

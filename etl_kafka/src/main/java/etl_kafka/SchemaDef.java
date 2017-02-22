@@ -142,7 +142,7 @@ public class SchemaDef{
         + "  { \"name\":\"USER_DATA_13_STRG\", \"type\":\"string\" },"
         + "  { \"name\":\"USER_DATA_14_STRG\", \"type\":\"string\" },"
         + "  { \"name\":\"USER_DATA_15_STRG\", \"type\":\"string\" },"
-        + "  { \"name\":\"RESERVED_01 \", \"type\":\"string\" }"
+        + "  { \"name\":\"RESERVED_01\", \"type\":\"string\" }"
         + "]}";
 
     public static final String AVRO_SCHEMA_C =
@@ -269,7 +269,7 @@ public class SchemaDef{
         + "  { \"name\":\"USER_DATA_13_STRG\", \"type\":\"string\" },"
         + "  { \"name\":\"USER_DATA_14_STRG\", \"type\":\"string\" },"
         + "  { \"name\":\"USER_DATA_15_STRG\", \"type\":\"string\" },"
-        + "  { \"name\":\"RESERVED_01 \", \"type\":\"string\" }"
+        + "  { \"name\":\"RESERVED_01\", \"type\":\"string\" }"
         + "]}";
 
     public static final String AVRO_SCHEMA_logaction =

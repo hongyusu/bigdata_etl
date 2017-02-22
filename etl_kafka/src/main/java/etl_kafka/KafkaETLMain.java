@@ -176,8 +176,8 @@ public class KafkaETLMain {
 
         String topicIn_loguser   = "loguser"; 
         String topicIn_logaction = "logaction";
-        String topicOut_OUTLog1  = "OUTLog1";
-        String topicOut_OUTLog2  = "OUTLog2";
+        String topicOut_OUTLogP  = "OUTLogP";
+        String topicOut_OUTLogC  = "OUTLogC";
 
         // SOURCE
         KStreamBuilder builder = new KStreamBuilder();
@@ -218,8 +218,8 @@ public class KafkaETLMain {
             .branch( new FilterloguserForPC("P"), new FilterloguserForPC("C") );
 
         // STREAM OUT
-        loguser_logaction_array[0].to(stringSerde, avroSerde, topicOut_OUTLog1);
-        loguser_logaction_array[1].to(stringSerde, avroSerde, topicOut_OUTLog2);
+        loguser_logaction_array[0].to(stringSerde, avroSerde, topicOut_OUTLogP);
+        loguser_logaction_array[1].to(stringSerde, avroSerde, topicOut_OUTLogC);
 
         return new KafkaStreams(builder, props);
     }
