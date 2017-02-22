@@ -66,8 +66,6 @@ import org.apache.commons.lang.SerializationException;
 
 public class KafkaETLMain {
 
-	private static final String PROCESSlog  = "PROCESS-LOG";
-
     private static Serde<GenericRecord> avroSerde;
     private static Serde<String> stringSerde;
 
@@ -83,26 +81,16 @@ public class KafkaETLMain {
 
     public void run() throws Exception{
 
-        Boolean syncFlag       = false;
         String zookeeperURL    = "localhost:2181";
         String bootstrapURL    = "http://10.0.1.2:9092";
         String registryURL     = "http://localhost:8081";
         String keySerializer   = "org.apache.kafka.common.serialization.StringSerializer";
         String valueSerializer = "org.apache.kafka.common.serialization.ByteArraySerializer";
-        String operation       = PROCESSlog;
 
         // parse input arguments
 		for (int i = 0; i < args.length; i++) {
 
-			if (args[i].equals("--sync-flag")) {
-                System.out.println(args[i]);
-                if (args[++i].equals("true")){
-                    syncFlag = true;
-                } else {
-                    syncFlag = false;
-                }
-			} else if (args[i].equals("--process-log    "))   { operation       = PROCESSlog;
-            } else if (args[i].equals("--zookeeper-url") )    { zookeeperURL    = args[++i];
+                   if (args[i].equals("--zookeeper-url") )    { zookeeperURL    = args[++i];
             } else if (args[i].equals("--bootstrap-url") )    { bootstrapURL    = args[++i];
             } else if (args[i].equals("--registry-url") )     { registryURL     = args[++i];
             } else if (args[i].equals("--key-serializer") )   { keySerializer   = args[++i];
@@ -115,7 +103,7 @@ public class KafkaETLMain {
 		Properties props = new Properties();
         props.put("schema.registry.url", registryURL  );
         props.put("bootstrap.servers",   bootstrapURL );   
-        props.put("application.id",      "GFM-Kafka-Processor_" + stamp );
+        props.put("application.id",      "Kafka-application" + stamp );
         props.put(StreamsConfig.KEY_SERDE_CLASS_CONFIG,   Serdes.String().getClass().getName() );
         props.put(StreamsConfig.VALUE_SERDE_CLASS_CONFIG, Serdes.ByteArray().getClass().getName() );
 
@@ -134,11 +122,8 @@ public class KafkaETLMain {
          */
         KafkaStreams dataProcessingStream = null;
 
-        if (operation == PROCESSlog) {
-            dataProcessingStream = ProcessLOG(props);
-        }
-
         try{
+            dataProcessingStream = ProcessLOG(props);
             dataProcessingStream.start();
         }catch(Exception ex){
         }
@@ -149,17 +134,50 @@ public class KafkaETLMain {
 
         System.out.println(">>>>>> Now, processing log");
 
+    	int schemaId;
         Schema.Parser parser  = new Schema.Parser();
     	CachedSchemaRegistryClient client = new CachedSchemaRegistryClient(props.get("schema.registry.url").toString(),20);
 
-        final Schema schema_loguser   = loadSchema("loguser",client,SchemaDefinition.AVRO_SCHEMA_loguser);
-        final Schema schema_logaction = loadSchema("logaction",client,SchemaDefinition.AVRO_SCHEMA_logaction);
-        final Schema schema_OUTlog    = loadSchema("OUTlog",client,SchemaDefinition.AVRO_SCHEMA_OUTlog);
+        Schema schema_loguser; 
+    	try{
+            schemaId       = client.getLatestSchemaMetadata("loguser").getId();
+            schema_loguser = client.getByID(schemaId);
+        }catch (Exception ex){
+        	schema_loguser = parser.parse(SchemaDef.AVRO_SCHEMA_loguser);
+           try{
+        	   schemaId = client.register("loguser",schema_loguser);
+           }catch(Exception e){
+           }
+        }
+        
+        Schema schema_logaction; 
+    	try{
+            schemaId       = client.getLatestSchemaMetadata("logaction").getId();
+            schema_logaction = client.getByID(schemaId);
+        }catch (Exception ex){
+        	schema_logaction = parser.parse(SchemaDef.AVRO_SCHEMA_logaction);
+           try{
+        	   schemaId = client.register("logaction",schema_logaction);
+           }catch(Exception e){
+           }
+        }
+
+        Schema schema_OUTLog; 
+    	try{
+            schemaId       = client.getLatestSchemaMetadata("OUTLog").getId();
+            schema_OUTLog = client.getByID(schemaId);
+        }catch (Exception ex){
+        	schema_OUTLog = parser.parse(SchemaDef.AVRO_SCHEMA_OUTLog);
+           try{
+        	   schemaId = client.register("OUTLog",schema_OUTLog);
+           }catch(Exception e){
+           }
+        }
 
         String topicIn_loguser   = "loguser"; 
         String topicIn_logaction = "logaction";
-        String topicOut_OUTlog1  = "OUTlog1";
-        String topicOut_OUTlog2  = "OUTlog2";
+        String topicOut_OUTLog1  = "OUTLog1";
+        String topicOut_OUTLog2  = "OUTLog2";
 
         // SOURCE
         KStreamBuilder builder = new KStreamBuilder();
@@ -168,10 +186,10 @@ public class KafkaETLMain {
 
         // <KTable> logaction
         KTable<String,GenericRecord> KT_logaction_cus = source_logaction
-            .mapValues( new ParserByteToAvro(schema_logaction) )
+            .mapValues( new GenerateAvroFromByte(schema_logaction) )
             .mapValues( new Processlogaction() )
             .filter( new Filterlogaction() )
-            .map( new RepartitionByField("logaction_ASIAKASTUNNUS") )
+            .map( new RepartitionViaColumn("logaction_ASIAKASTUNNUS") )
             .through(stringSerde, avroSerde, "logaction-user")
             .groupByKey(stringSerde, avroSerde)
             .reduce( new Reducer<GenericRecord>(){
@@ -183,15 +201,15 @@ public class KafkaETLMain {
 
         // <KStream> loguser
         KStream<String, GenericRecord> avroIn_loguser = source_loguser
-            .mapValues( new ParserByteToAvro(schema_loguser) )
+            .mapValues( new GenerateAvroFromByte(schema_loguser) )
             .mapValues( new Processloguser() )
             .filter( new Filterloguser() )
-            .map( new RepartitionByField("loguser_CUSTOMER_ID") )
+            .map( new RepartitionViaColumn("loguser_CUSTOMER_ID") )
             .through(stringSerde, avroSerde, "facp-loguser");
 
         // JOIN : <KStream>loguser + <KTable>logaction
         KStream<String, GenericRecord> loguser_logaction = avroIn_loguser.leftJoin(KT_logaction_cus,
-                new GenericRecordJoiner(schema_OUTlog));
+                new CustomerJoiner(schema_OUTLog));
 
         // BRANCH
         // 0 -> P 
@@ -200,37 +218,11 @@ public class KafkaETLMain {
             .branch( new FilterloguserForPC("P"), new FilterloguserForPC("C") );
 
         // STREAM OUT
-        loguser_logaction_array[0].to(stringSerde, avroSerde, topicOut_OUTlog1);
-        loguser_logaction_array[1].to(stringSerde, avroSerde, topicOut_OUTlog2);
+        loguser_logaction_array[0].to(stringSerde, avroSerde, topicOut_OUTLog1);
+        loguser_logaction_array[1].to(stringSerde, avroSerde, topicOut_OUTLog2);
 
         return new KafkaStreams(builder, props);
     }
-
-
-
-   
-    private static Schema loadSchema(String name, CachedSchemaRegistryClient client, String schemaDefinition){
-    	
-    	Schema schema;
-    	int schemaId;
-    	Schema.Parser parser  = new Schema.Parser();
-    	
-    	try{
-            schemaId  = client.getLatestSchemaMetadata(name).getId();
-            schema    = client.getByID(schemaId);
-        }catch (Exception ex){
-        	System.out.println("Fetching AVRO schema "+name+ " from the registry failed");
-        	schema = parser.parse(schemaDefinition);
-           try{
-        	   schemaId = client.register(name,schema);
-           }catch(Exception e){
-        	   System.out.println("Registering AVRO schema " + name +" failed");
-           }
-        }
-    	return schema;
-    }
-
-
 
 }
 

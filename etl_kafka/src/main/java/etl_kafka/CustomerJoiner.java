@@ -5,36 +5,22 @@ import org.apache.avro.generic.GenericData;
 import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.streams.kstream.ValueJoiner;
 
-public class GenericRecordJoiner implements ValueJoiner<GenericRecord, GenericRecord, GenericRecord> {
+public class CustomerJoiner implements ValueJoiner<GenericRecord, GenericRecord, GenericRecord> {
 
     private Schema schema;
     private String[] rfields;
     private String[] lfields;
-    private boolean fDecl = false;
-    private boolean changePrefix = false;
-    String myPrefix = null;
-    String myNewPrefix = null;
     
-    public GenericRecordJoiner(Schema schema) {
+    public CustomerJoiner(Schema schema) {
         this.schema = schema;
         rfields = null;
         lfields = null;
     }
     
-    public GenericRecordJoiner(Schema schema, String tablePrefix, String newPrefix, boolean doPrefix) {
-        this.schema = schema;
-        rfields = null;
-        lfields = null;
-        changePrefix = doPrefix;
-        myPrefix = tablePrefix;
-        myNewPrefix = newPrefix;
-    }
-
-    public GenericRecordJoiner(Schema schema, String leftFields, String rightFields) {
+    public CustomerJoiner(Schema schema, String leftFields, String rightFields) {
         this.schema = schema;
         lfields = leftFields.split(",");
         rfields = rightFields.split(",");
-        fDecl = true;
     }
 
     @Override
@@ -60,9 +46,6 @@ public class GenericRecordJoiner implements ValueJoiner<GenericRecord, GenericRe
         for (Schema.Field field : this.schema.getFields()) {
             String name     = field.name();
             String src_name = name;
-            if(changePrefix){
-            	src_name = name.replace(myPrefix, myNewPrefix);
-            }
             if(left != null){
             	value = left.get(src_name); // get returns null if field not found in schema
             }
@@ -73,12 +56,6 @@ public class GenericRecordJoiner implements ValueJoiner<GenericRecord, GenericRe
 
             //System.out.println(name+"+"+value);
             output.put(name, value);
-        }
-
-        if(fDecl && right != null){
-        	for(int i = 0; i < lfields.length; i++){
-        		output.put(lfields[i], right.get(rfields[i]));
-        	}
         }
 
         return output;

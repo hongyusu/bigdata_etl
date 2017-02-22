@@ -1,6 +1,4 @@
-
-
-/*
+/**
  *
  * parse from byte to avro
  * input  : kstream<byte[]>
@@ -18,12 +16,12 @@ import org.apache.avro.generic.GenericRecord;
 import org.apache.kafka.streams.kstream.ValueMapper;
 import java.nio.charset.StandardCharsets;
 
-public class ParserByteToAvro implements ValueMapper<byte[],GenericRecord>{
+public class GenerateAvroFromByte implements ValueMapper<byte[],GenericRecord>{
 
     private Schema schema;
 	private GenericRecord avroOutMSG;
 
-	public ParserByteToAvro(Schema schema) throws Exception{
+	public GenerateAvroFromByte(Schema schema) throws Exception{
         this.schema = schema; 
     }
 	   
@@ -43,7 +41,6 @@ public class ParserByteToAvro implements ValueMapper<byte[],GenericRecord>{
             }
         }catch(Exception ex){
             System.out.println("Oops, formatting exception! (escaping chars need to be implemented)");
-            //ex.printStackTrace();
         }
         return avroOutMSG;
 	}

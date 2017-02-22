@@ -1,6 +1,4 @@
-
-
-/*
+/**
  *
  * Avro schema definition 
  *
@@ -9,7 +7,7 @@
 
 package etl_kafka;
 
-public class SchemaDefinition{
+public class SchemaDef{
 
     public static final String AVRO_SCHEMA_P =
         "{"
@@ -441,10 +439,10 @@ public class SchemaDefinition{
             + "  { \"name\":\"loguser_OFFICIAL_ID_FLAG\", \"type\":\"string\" }"
             + "]}";
 
-    public static final String AVRO_SCHEMA_OUTlog =
+    public static final String AVRO_SCHEMA_OUTLog =
             "{"
             + "\"type\":\"record\","
-            + "\"name\":\"OUTlog\","
+            + "\"name\":\"OUTLog\","
             + "\"fields\":["
             + "  { \"name\":\"loguser_CUSTOMER_ID\", \"type\":\"string\" },"
             + "  { \"name\":\"loguser_ORGUNIT_ID\", \"type\":\"string\" },"
