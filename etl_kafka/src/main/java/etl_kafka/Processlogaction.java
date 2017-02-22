@@ -17,7 +17,7 @@ public class Processlogaction implements ValueMapper<GenericRecord, GenericRecor
 
         GenericRecord output = new GenericData.Record((GenericData.Record) input, false);
 
-        output.put("t3330bb_ASIAKASTUNNUS", ((String) input.get("t3330bb_ASIAKASTUNNUS")).replaceAll(" ", ""));
+        output.put("logaction_ASIAKASTUNNUS", ((String) input.get("logaction_ASIAKASTUNNUS")).replaceAll(" ", ""));
 
         return output;
     }

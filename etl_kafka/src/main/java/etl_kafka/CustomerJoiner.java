@@ -29,7 +29,6 @@ public class CustomerJoiner implements ValueJoiner<GenericRecord, GenericRecord,
 
         Object value = null;
 
-        /*
         try{
             System.out.print("1-> " + left.get(0)+" "+left.get(1)+" "+left.get(2));
             System.out.print(":");
@@ -41,7 +40,6 @@ public class CustomerJoiner implements ValueJoiner<GenericRecord, GenericRecord,
         }catch(Exception ex){
             System.out.println("2-> ");
         }
-        */
 
         for (Schema.Field field : this.schema.getFields()) {
             String name     = field.name();

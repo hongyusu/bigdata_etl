@@ -205,7 +205,7 @@ public class KafkaETLMain {
             .mapValues( new Processloguser() )
             .filter( new Filterloguser() )
             .map( new RepartitionViaColumn("loguser_CUSTOMER_ID") )
-            .through(stringSerde, avroSerde, "facp-loguser");
+            .through(stringSerde, avroSerde, "loguser-user");
 
         // JOIN : <KStream>loguser + <KTable>logaction
         KStream<String, GenericRecord> loguser_logaction = avroIn_loguser.leftJoin(KT_logaction_cus,
