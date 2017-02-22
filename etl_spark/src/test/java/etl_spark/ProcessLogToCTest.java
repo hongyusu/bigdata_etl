@@ -1,6 +1,6 @@
 /**
  *
- * unit test for spark mapper : unireal -- rbtran
+ * unit test for spark mapper
  *
  */
 
@@ -34,39 +34,31 @@ import java.util.Queue;
 
 import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.Serializable;
-import java.net.ConnectException;
-import java.net.Socket;
-import java.util.concurrent.atomic.AtomicLong;
-
 
 public class ProcessLogToCTest {
 
+    private SparkConf conf;
+    private static JavaStreamingContext ssc;
+
     @Before
     public void setUp() {
-        System.clearProperty("spark.streaming.clock");
+        conf = new SparkConf().setAppName("test").setMaster("local[*]");
+        ssc  = new JavaStreamingContext(conf, new Duration(1000L));
     }
 
     @After
     public void tearDown() {
-        System.clearProperty("spark.streaming.clock");
+        ssc.close();
     }
 
     @Test
     public void testProcessLogToC() {
-
-        SparkConf conf = new SparkConf().setAppName("test").setMaster("local[*]");
-
-        JavaStreamingContext ssc = new JavaStreamingContext(conf, new Duration(1000L));
 
         Schema.Parser parser = new Schema.Parser();
         Schema schema = parser.parse(SchemaDef.AVRO_SCHEMA_OUTLog);
         GenericRecord record = new GenericData.Record(schema);
 
         for (Schema.Field field : schema.getFields()) {
-            //System.out.println(field.name());
             record.put(field.name(), "1");
         }
 
@@ -81,7 +73,6 @@ public class ProcessLogToCTest {
         JavaDStream<GenericRecord> outputStream = inputStream.transform(new ProcessLogToC());
 
         assertEquals(0,0);
-        ssc.close();
     }
 }
 

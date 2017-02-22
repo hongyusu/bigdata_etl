@@ -30,7 +30,7 @@ repositories {
 }
 
 dependencies {
-    compile files( '/data/code/stash/gfm/schema-registry-3.1.2/client/target/kafka-schema-registry-client-3.1.2.jar')
+    compile files( '/Users/hongyusu/Codes/Packages/schema-registry/client/target/kafka-schema-registry-client-3.1.2.jar')
     compile( 'io.confluent:kafka-avro-serializer:2.0.1' )
     compile( 'org.easymock:easymock:3.1' )
 	compile( 'org.slf4j:slf4j-api:1.7.2')                          

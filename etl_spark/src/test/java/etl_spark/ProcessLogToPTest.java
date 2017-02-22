@@ -44,29 +44,28 @@ import java.util.concurrent.atomic.AtomicLong;
 
 public class ProcessLogToPTest {
 
+    private SparkConf conf;
+    private static JavaStreamingContext ssc;
+
     @Before
     public void setUp() {
-        System.clearProperty("spark.streaming.clock");
+        conf = new SparkConf().setAppName("test").setMaster("local[*]");
+        ssc  = new JavaStreamingContext(conf, new Duration(1000L));
     }
 
     @After
     public void tearDown() {
-        System.clearProperty("spark.streaming.clock");
+        ssc.close();
     }
 
     @Test
     public void testProcessLogToP() {
-
-        SparkConf conf = new SparkConf().setAppName("test").setMaster("local[*]");
-
-        JavaStreamingContext ssc = new JavaStreamingContext(conf, new Duration(1000L));
 
         Schema.Parser parser = new Schema.Parser();
         Schema schema = parser.parse(SchemaDef.AVRO_SCHEMA_OUTLog);
         GenericRecord record = new GenericData.Record(schema);
 
         for (Schema.Field field : schema.getFields()) {
-            //System.out.println(field.name());
             record.put(field.name(), "1");
         }
 
@@ -81,7 +80,6 @@ public class ProcessLogToPTest {
         JavaDStream<GenericRecord> outputStream = inputStream.transform(new ProcessLogToP());
 
         assertEquals(0,0);
-        ssc.close();
     }
 }
 

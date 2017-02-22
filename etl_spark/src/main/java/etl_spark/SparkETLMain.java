@@ -179,11 +179,11 @@ public class SparkETLMain {
         JavaDStream<GenericRecord> avroOutMsg = null;
 
         if (operation == ProcessloguserP)       {
-            avroOutMsg = avroInMsg.transform( new ProcessLoguserToP() );
+            avroOutMsg = avroInMsg.transform( new ProcessLogToP() );
             avroOutMsg.foreachRDD( new ProduceOutputStream(topicOut, schemaNameOut, producerP) );
 
         } else if (operation == ProcessloguserC)       {
-            avroOutMsg = avroInMsg.transform( new ProcessLoguserToC() );
+            avroOutMsg = avroInMsg.transform( new ProcessLogToC() );
             avroOutMsg.foreachRDD( new ProduceOutputStream(topicOut, schemaNameOut, producerC) );
 
         }

@@ -38,8 +38,8 @@ dependencies {
     compile( 'io.confluent:kafka-avro-serializer:2.0.0' )
     compile( 'io.confluent:kafka-schema-registry-client:2.0.0' )
     compile( 'io.confluent:kafka-schema-registry:2.0.0' )
-    compile files( '/Users/hongyusu/Codes/bigdata_etl/kafka-connect-jdbc/target/kafka-connect-jdbc-3.1.2.jar')
-    compile files( '/Users/hongyusu/Codes/bigdata_etl/schema-registry/avro-converter/target/kafka-connect-avro-converter-3.1.2.jar')
+    compile files( '/Users/hongyusu/Codes/Packages/bigdata_etl/kafka-connect-jdbc/target/kafka-connect-jdbc-3.1.2.jar')
+    compile files( '/Users/hongyusu/Codes/Packages/bigdata_etl/schema-registry/avro-converter/target/kafka-connect-avro-converter-3.1.2.jar')
 	compile( 'org.slf4j:slf4j-api:1.7.2')                          
     compile( 'org.apache.logging.log4j:log4j-api:2.6.2' ) 
     compile( 'org.apache.logging.log4j:log4j-core:2.6.2' )
@@ -56,8 +56,8 @@ dependencies {
     compile( 'com.opencsv:opencsv:3.8' )
 
     testCompile group: 'junit', name: 'junit', version: '4.11'
-    testCompile files( '/Users/hongyusu/Codes/kafka/streams/build/libs/kafka-streams-0.10.1.0-test.jar')
-    testCompile files( '/Users/hongyusu/Codes/kafka/streams/build/libs/kafka-streams-0.10.1.0-sources.jar')
+    testCompile files( '/Users/hongyusu/Codes/Packages/kafka/streams/build/libs/kafka-streams-0.10.1.0-test.jar')
+    testCompile files( '/Users/hongyusu/Codes/Packages/kafka/streams/build/libs/kafka-streams-0.10.1.0-sources.jar')
 }
 
 jar {
