@@ -78,7 +78,7 @@ public class ProcessloguserTest {
             }catch(Exception ex){
                 System.out.println("Error when parsing loguser during tesing loguser processing");
             }
-            msgOut[k].put("loguser_CUSTOMER_ID",msgOut[k].get("loguser_CUSTOMER_ID").toString().substring(2));
+            msgOut[k].put("loguser_PHFGBZRE_VQ",msgOut[k].get("loguser_PHFGBZRE_VQ").toString().substring(2));
         }
 
         // STREAM DEFINITION

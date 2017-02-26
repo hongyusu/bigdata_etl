@@ -87,7 +87,7 @@ public class RepartitionViaColumnTest {
         MockProcessorSupplier<String, GenericRecord> processor = new MockProcessorSupplier<>();
         stream = builder.stream(stringSerde, avroSerde, topicName);
         try{
-            stream.map( new RepartitionViaColumn("loguser_CUSTOMER_ID") ).process(processor);
+            stream.map( new RepartitionViaColumn("loguser_PHFGBZRE_VQ") ).process(processor);
         }catch(Exception ex){
         }
 
@@ -104,7 +104,7 @@ public class RepartitionViaColumnTest {
 
         // TEST RESULT
         for (int i = 0; i < TestDataLoguser.size; i++) {
-            assertEquals(msgOut[i].get("loguser_CUSTOMER_ID").toString()+":"+msgOut[i].toString(), processor.processed.get(i));
+            assertEquals(msgOut[i].get("loguser_PHFGBZRE_VQ").toString()+":"+msgOut[i].toString(), processor.processed.get(i));
         }
 
     }
