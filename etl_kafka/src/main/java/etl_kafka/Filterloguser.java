@@ -22,7 +22,7 @@ public class Filterloguser implements Predicate<String,GenericRecord>{
 
 	@Override
 	public boolean test(String key, GenericRecord avroMSG){
-        //return avroMSG.get("loguser_CUSTOMER_ID").equals("someid");
+        //return avroMSG.get("loguser_").equals("someid");
         return true;
 	}
 }

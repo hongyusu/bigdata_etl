@@ -19,7 +19,7 @@ public class Filterlogaction implements Predicate<String,GenericRecord>{
 
 	@Override
 	public boolean test(String key, GenericRecord avroMSG){
-        //return avroMSG.get("facpcus_CUSTOMER_ID").equals("someid");
+        //return avroMSG.get("facpcus_").equals("someid");
         return true;
 	}
 }

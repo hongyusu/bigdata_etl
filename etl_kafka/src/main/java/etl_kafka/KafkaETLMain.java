@@ -189,7 +189,7 @@ public class KafkaETLMain {
             .mapValues( new GenerateAvroFromByte(schema_logaction) )
             .mapValues( new Processlogaction() )
             .filter( new Filterlogaction() )
-            .map( new RepartitionViaColumn("logaction_ASIAKASTUNNUS") )
+            .map( new RepartitionViaColumn("logaction_NFVNXNFGHAAHF") )
             .through(stringSerde, avroSerde, "logaction-user")
             .groupByKey(stringSerde, avroSerde)
             .reduce( new Reducer<GenericRecord>(){
@@ -204,7 +204,7 @@ public class KafkaETLMain {
             .mapValues( new GenerateAvroFromByte(schema_loguser) )
             .mapValues( new Processloguser() )
             .filter( new Filterloguser() )
-            .map( new RepartitionViaColumn("loguser_CUSTOMER_ID") )
+            .map( new RepartitionViaColumn("loguser_PHFGBZRE_VQ") )
             .through(stringSerde, avroSerde, "loguser-user");
 
         // JOIN : <KStream>loguser + <KTable>logaction

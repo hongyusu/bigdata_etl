@@ -28,7 +28,7 @@ public class Processloguser implements ValueMapper<GenericRecord,GenericRecord>{
 	public GenericRecord apply(GenericRecord avroMSG){
 
         try{
-            avroMSG.put("loguser_CUSTOMER_ID",avroMSG.get("loguser_CUSTOMER_ID").toString().substring(2));
+            avroMSG.put("loguser_PHFGBZRE_VQ",avroMSG.get("loguser_PHFGBZRE_VQ").toString().substring(2));
         }catch(Exception ex){
         }
 

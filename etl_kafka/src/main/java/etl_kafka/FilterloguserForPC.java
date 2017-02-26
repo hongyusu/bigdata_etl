@@ -23,7 +23,7 @@ public class FilterloguserForPC implements Predicate<String,GenericRecord>{
 
    @Override
     public boolean test(String key, GenericRecord avroMSG){
-        if(avroMSG.get("loguser_CUSTOMER_TYPE_CODE").toString().equals(keyword)){
+        if(avroMSG.get("loguser_PHFGBZRE_VQ").toString().equals(keyword)){
             return true;
         } 
         return false;
