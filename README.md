@@ -9,7 +9,7 @@ To demo technology for big data ETL operations including
 
 1. ./etl_kafka/
 
-   Stream processing template using Kafka
+   Stream processing template via Kafka
 
 1. ./etl_spark/
 
