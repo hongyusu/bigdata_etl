@@ -13,7 +13,7 @@ To demo technology for big data ETL operations including
 
 1. ./etl_spark/
 
-   Stream processing template using Spark
+   Stream processing template for Spark
 
 1. ./etl_flume/
 
