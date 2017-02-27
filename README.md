@@ -17,4 +17,4 @@ To demo technology for big data ETL operations including
 
 1. ./etl_flume/
 
-   Flume examples
+   Flume command line examples
