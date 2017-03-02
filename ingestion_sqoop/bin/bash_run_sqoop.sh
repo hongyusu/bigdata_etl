@@ -1,3 +1,27 @@
+# ingestion from hive to mysql
+
+sqoop export \
+    --connect jdbc:mysql://localhost/test \
+    --username root \
+    --password pwd \
+    --table ratings \
+    --export-dir /user/hive/warehouse/test.db/ratings \
+    -m 1
+
+exit
+
+# ingestion from mysql to hive
+
+sqoop import \
+   --connect jdbc:mysql://localhost/test \
+   --username root \
+   --P \
+   --table testtable \
+   --hive-import \
+   --hive-database test \
+   --create-hive-table \
+   --hive-table testtable \
+   -m 1 
 
 
 

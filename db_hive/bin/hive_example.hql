@@ -1,4 +1,6 @@
 
+-- use databaseuse test
+use test;
 
 -- drop table 
 drop table if exists ratings;
