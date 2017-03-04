@@ -1,14 +1,36 @@
+
+
+
+# ingestion from mysql to hbase 
+
+sqoop import \
+    --bindir ./ \
+    --connect jdbc:mysql://localhost/test \
+    --username root \
+    --password pwd \
+    --table testtable  \
+    --columns "column1, column2"  \
+    --hbase-table testtable  \
+    --column-family f1  \
+    --hbase-row-key column1 \
+    -m 1 -verbose 
+exit
+
+
+
 # ingestion from hive to mysql
 
 sqoop export \
+    --bindir ./ \
     --connect jdbc:mysql://localhost/test \
     --username root \
     --password pwd \
     --table ratings \
     --export-dir /user/hive/warehouse/test.db/ratings \
     -m 1
-
 exit
+
+
 
 # ingestion from mysql to hive
 

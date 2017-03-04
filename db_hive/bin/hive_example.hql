@@ -1,5 +1,6 @@
 
 -- use databaseuse test
+create database test;
 use test;
 
 -- drop table 
