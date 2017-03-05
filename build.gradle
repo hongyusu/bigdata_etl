@@ -14,11 +14,11 @@ mainClassName = 'etl_kafka.SourceConnectorFacp'
 
 sourceSets {
     main {
-        java.srcDir 'etl_kafka/src/main/java'
+        java.srcDir 'etl_spark/src/main/java'
     }
     test {
-        java.srcDir 'etl_kafka/src/test/java'
-        java.srcDir 'etl_kafka/src/main/java'
+        java.srcDir 'etl_spark/src/test/java'
+        java.srcDir 'etl_spark/src/main/java'
     }
 }
 
