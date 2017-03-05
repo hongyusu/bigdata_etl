@@ -18,3 +18,7 @@ To demo technology for big data ETL operations including
 1. ./etl_flume/
 
    Flume command line examples
+
+1. ./etl_storm/
+
+   Stream processing template for Storm
