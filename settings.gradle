@@ -2,3 +2,4 @@
 
 include 'etl_kafka'
 include 'etl_spark'
+include 'ingestion_flume'
