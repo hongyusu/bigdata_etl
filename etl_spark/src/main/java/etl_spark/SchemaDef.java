@@ -5,7 +5,7 @@
  */
 
 
-package etl_kafka;
+package etl_spark;
 
 public class SchemaDef{
 
