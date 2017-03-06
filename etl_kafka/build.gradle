@@ -66,6 +66,7 @@ dependencies {
 
 
 
+/*
 task fatJar(type: Jar){
     zip64 true
 	description = "Assembles a Hadoop ready fat jar file" 
@@ -81,5 +82,6 @@ task fatJar(type: Jar){
     exclude 'META-INF/*.RSA','META-INF/*.SF','META-INF/*.DSA'
     with jar 
 }
+*/
 
 
