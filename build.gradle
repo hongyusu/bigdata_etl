@@ -21,3 +21,6 @@ sourceSets {
 project (':etl_kafka') {
 }
 
+
+project (':etl_spark') {
+}

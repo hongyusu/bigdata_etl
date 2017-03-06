@@ -3,7 +3,7 @@ language: java
 jdk:
       - openjdk7
           - oraclejdk7
-script: ./gradlew -q jar oneJar distZip
+script: ./gradlew -q jar fatJar distZip
 after_script:
       - test -f ./build/libs/dropwizard-gradle.jar
           - test -f ./build/libs/dropwizard-gradle-standalone.jar
