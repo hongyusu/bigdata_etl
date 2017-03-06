@@ -64,17 +64,7 @@ dependencies {
     testCompile files( './libLocal/kafka-streams-0.10.1.0-sources.jar')
 }
 
-jar {
-	description = "Assembles a Hadoop ready jar file" 
-	doFirst {
-        into( 'lib' ) {
-			from configurations.libraries
-	    }   
-	}
-	manifest {
-	    attributes( "Main-Class": "${archivesBaseName}/Main")
-	}
-}
+
 
 task fatJar(type: Jar){
     zip64 true
@@ -91,21 +81,5 @@ task fatJar(type: Jar){
     exclude 'META-INF/*.RSA','META-INF/*.SF','META-INF/*.DSA'
     with jar 
 }
-
-task distCopy( type: Copy, dependsOn: jar ) {
-	into "${buildDir}/dist/${archivesBaseName}"
-	from 'README.TXT'
-	from 'build.gradle'
-	from ( 'src' )  {into 'src'}
-	from ( 'data' ) {into 'data'}
-	from "$buildDir/libs"
-}
-
-task dist( type: Tar, dependsOn: distCopy ) {
-	compression = "GZIP"
-	classifier  = new SimpleDateFormat( "yyyyMMdd" ).format( new Date() )
-	from "${buildDir}/dist/"
-}
-
 
 
