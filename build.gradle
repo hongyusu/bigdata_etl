@@ -20,8 +20,10 @@ sourceSets {
 project (':etl_kafka') {
 }
 
-
 project (':etl_spark') {
+}
+
+project (':etl_storm') {
 }
 
 project (':ingestion_flume') {
