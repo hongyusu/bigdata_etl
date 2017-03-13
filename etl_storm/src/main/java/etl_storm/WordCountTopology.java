@@ -6,11 +6,9 @@ package etl_storm;
 import org.apache.storm.Config;
 import org.apache.storm.LocalCluster;
 import org.apache.storm.StormSubmitter;
-import org.apache.storm.task.ShellBolt;
 import org.apache.storm.task.OutputCollector;
 import org.apache.storm.task.TopologyContext;
 import org.apache.storm.topology.BasicOutputCollector;
-import org.apache.storm.topology.IRichBolt;
 import org.apache.storm.topology.OutputFieldsDeclarer;
 import org.apache.storm.topology.TopologyBuilder;
 import org.apache.storm.topology.base.BaseBasicBolt;
@@ -33,7 +31,7 @@ public class WordCountTopology {
         @Override
         public void execute(Tuple tuple) {
             String[] words = tuple.getString(0).split(" ");
-            for(String word : words) {
+            for (String word : words) {
                 _collector.emit(tuple, new Values(word));
                 _collector.ack(tuple);
             }
