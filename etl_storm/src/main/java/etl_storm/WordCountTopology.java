@@ -1,4 +1,8 @@
-
+/**
+ *
+ * storm word count example
+ *
+ */
 
 
 package etl_storm;
@@ -22,6 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WordCountTopology {
+
     public static class SplitSentence extends BaseRichBolt {
         OutputCollector _collector;
         @Override
@@ -87,4 +92,11 @@ public class WordCountTopology {
             cluster.shutdown();
         }
     }
+
 }
+
+
+
+
+
+
