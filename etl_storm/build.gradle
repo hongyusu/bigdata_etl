@@ -29,6 +29,7 @@ repositories {
 dependencies {
     compile( 'org.apache.storm:storm-core:1.0.3' )
     compile( 'org.apache.storm:storm-starter:1.0.3' )
+    compile( 'org.apache.storm:storm-kafka:1.0.3' )
     compile( 'org.apache.storm:storm:1.0.3' )
 
 }
